@@ -25,15 +25,19 @@ int main(int argc, char **argv) {
 	pimage.assignSP(2);
 	pimage.printAssignments();
 	SPImage spImage = SPImage(image.rows / 2, image.cols / 2, 2, meanColor);
+	auto tmp = spImage.getPixel(0).getSpCoor();
+	std::cout << tmp[0];
 	//TODO: assign centroid positions
 
 	//refine the superpixels
+	Slic slic = Slic(&pimage, &spImage);
+	slic.refineSP();
 
 	//start here
-	Slic sp = Slic(image.rows, image.cols, 2, meanColor, &image);
-	Slic sp1 = Slic(8, 4, 2, meanColor, &image);
-	//sp1.printAssignments();
-	sp.refine();
+	//Slic sp = Slic(image.rows, image.cols, 2, meanColor, &image);
+	//Slic sp1 = Slic(8, 4, 2, meanColor, &image);
+	////sp1.printAssignments();
+	//sp.refineSP();
 
 	//displaying image
 	cv::Mat outImg;

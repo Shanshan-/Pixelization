@@ -7,7 +7,7 @@ Slic::Slic(Image* img1, SPImage* img2) {
 	pixelImage = img2;
 }
 
-void Slic::refine() { //runs one step of SLIC superpixel refinement
+void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	//TODO: fill in the refinement process from section 4.3, or contents of SLIC paper
 
 	//generate storage vector to be used (to store distances and average for calculation purposes)
@@ -17,62 +17,63 @@ void Slic::refine() { //runs one step of SLIC superpixel refinement
 	//assign new superpixel values based on distance
 	//TODO: fix the offset problem because of pixels and centers not lining up
 	for (int num = 0; num < pixelImage->numPixels(); num++) {
-		int lxBound = std::max(0, int(std::floor(centers[num][0] - 1.5*pixelSize)));
-		int uxBound = std::min(numCols, int(std::ceil(centers[num][0] + 1.5*pixelSize)));
-		int lyBound = std::max(0, int(std::floor(centers[num][1] - 1.5*pixelSize)));
-		int uyBound = std::min(numRows, int(std::ceil(centers[num][1] + 1.5*pixelSize)));
+		std::vector<double> spCoor = pixelImage->getPixel(num).getImgCoor();
+		int lxBound = std::max(0, int(spCoor[0] - 1.5*pixelImage->getSpSize()));
+		int uxBound = std::min(pixelImage->cols(), int(std::ceil(spCoor[0] + 1.5*pixelImage->getSpSize())));
+		int lyBound = std::max(0, int(std::floor(spCoor[1] - 1.5*pixelImage->getSpSize())));
+		int uyBound = std::min(pixelImage->rows(), int(std::ceil(spCoor[1] + 1.5*pixelImage->getSpSize())));
 		for (int x = lxBound; x < uxBound; x++) {
 			for (int y = lyBound; y < uyBound; y++) {
 				double pixel_dist = distance(x, y, num);
 				if (pixel_dist <= tmp[x][y]) {
 					tmp[x][y] = pixel_dist;
-					spNum[x][y] = num;
+					origImage->getPixel(num / origImage->cols(), num % origImage->cols()).setSpNum(num);
 				}
 			}
 		}
 	}
-	printAssignments();
+	origImage->printAssignments();
 
-	//generate average positions and colors of each centroid
-	tmp.assign(centers.size(), std::vector<double>(6, 0));
-	for (int pos = 0; pos < numRows*numCols; pos++) {
-		int spGroup = spNum[std::floor(pos / numRows)][pos % numRows];
-		tmp[pos][0] = color[spGroup][0];
-		tmp[pos][1] = color[spGroup][1];
-		tmp[pos][2] = color[spGroup][2];
-		tmp[pos][3] = std::floor(pos / numRows);
-		tmp[pos][4] = pos % numRows;
-		tmp[pos][5] += 1;
-	}
+	////generate average positions and colors of each centroid
+	//tmp.assign(centers.size(), std::vector<double>(6, 0));
+	//for (int pos = 0; pos < numRows*numCols; pos++) {
+	//	int spGroup = spNum[std::floor(pos / numRows)][pos % numRows];
+	//	tmp[pos][0] = color[spGroup][0];
+	//	tmp[pos][1] = color[spGroup][1];
+	//	tmp[pos][2] = color[spGroup][2];
+	//	tmp[pos][3] = std::floor(pos / numRows);
+	//	tmp[pos][4] = pos % numRows;
+	//	tmp[pos][5] += 1;
+	//}
 
-	//adjust centroid locations and color valules
-	for (int x = 0; x < centers.size(); x++) {
-		//get 4-neighbor positions
-		double nadj[2], sadj[2], wadj[2], eadj[2];
-		if (x >= numSCols)
-			double nadj[] = { centers[x - numSCols][0], centers[x - numSCols][1] };
-		else
-			double nadj[] = { 2 * tmp[x][0] - centers[x + numSCols][0], 2 * tmp[x][1] - centers[x + numSCols][1] };
-		if (x < centers.size() - numSCols)
-			double sadj[] = { centers[x + numSCols][0], centers[x + numSCols][1] };
-		else
-			double sadj[] = { 2 * tmp[x][0] - centers[x - numSCols][0], 2 * tmp[x][0] - centers[x - numSCols][1] };
-		if (x % numSCols != 0)
-			double wadj[] = { centers[x - numSRows][0], centers[x - numSRows][1] };
-		else
-			double wadj[] = { 2 * tmp[x][0] - centers[x + numSRows][0], 2 * tmp[x][0] - centers[x + numSRows][1] };
-		if (x % numSCols == numSCols - 1)
-			double eadj[] = { centers[x + numSRows][0], centers[x + numSRows][1] };
-		else
-			double eadj[] = { 2 * tmp[x][0] - centers[x - numSRows][0], 2 * tmp[x][0] - centers[x - numSRows][1] };
+	////adjust centroid locations and color valules
+	//for (int x = 0; x < centers.size(); x++) {
+	//	//get 4-neighbor positions
+	//	double nadj[2], sadj[2], wadj[2], eadj[2];
+	//	if (x >= numSCols)
+	//		double nadj[] = { centers[x - numSCols][0], centers[x - numSCols][1] };
+	//	else
+	//		double nadj[] = { 2 * tmp[x][0] - centers[x + numSCols][0], 2 * tmp[x][1] - centers[x + numSCols][1] };
+	//	if (x < centers.size() - numSCols)
+	//		double sadj[] = { centers[x + numSCols][0], centers[x + numSCols][1] };
+	//	else
+	//		double sadj[] = { 2 * tmp[x][0] - centers[x - numSCols][0], 2 * tmp[x][0] - centers[x - numSCols][1] };
+	//	if (x % numSCols != 0)
+	//		double wadj[] = { centers[x - numSRows][0], centers[x - numSRows][1] };
+	//	else
+	//		double wadj[] = { 2 * tmp[x][0] - centers[x + numSRows][0], 2 * tmp[x][0] - centers[x + numSRows][1] };
+	//	if (x % numSCols == numSCols - 1)
+	//		double eadj[] = { centers[x + numSRows][0], centers[x + numSRows][1] };
+	//	else
+	//		double eadj[] = { 2 * tmp[x][0] - centers[x - numSRows][0], 2 * tmp[x][0] - centers[x - numSRows][1] };
 
 
-		//get average position and laplacian smooth towards grid structure
-		double newPos[] = { tmp[x][3] / tmp[x][5], tmp[x][4] / tmp[x][5] };
-		double avgPos[] = { (nadj[0] + sadj[0] + wadj[0] + eadj[0]) / 4, (nadj[1] + sadj[1] + wadj[1] + eadj[1]) / 4 };
+	//	//get average position and laplacian smooth towards grid structure
+	//	double newPos[] = { tmp[x][3] / tmp[x][5], tmp[x][4] / tmp[x][5] };
+	//	double avgPos[] = { (nadj[0] + sadj[0] + wadj[0] + eadj[0]) / 4, (nadj[1] + sadj[1] + wadj[1] + eadj[1]) / 4 };
 
 		//get average color and smooth
-	}
+	//}
 
 	//smooth color representatives of super pixels
 }

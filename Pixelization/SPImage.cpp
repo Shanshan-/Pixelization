@@ -6,9 +6,11 @@ SPImage::SPImage() {
 	exit(-1);
 }
 
-SPImage::SPImage(int xdim, int ydim, int spSize, cv::Scalar meanColor) {
+SPImage::SPImage(int xdim, int ydim, int size, cv::Scalar meanColor) {
 	dimensions[0] = xdim;
 	dimensions[1] = ydim;
+	spSize = size;
+	pixels.resize(xdim * ydim);
 	for (int x = 0; x < xdim * ydim; x++) {
 		pixels[x] = new SuperPixel(x / xdim, x % xdim, spSize, x, meanColor); //TODO: call delete later
 	}
@@ -41,6 +43,10 @@ SuperPixel SPImage::getPixel(int num) {
 
 int SPImage::numPixels() {
 	return dimensions[0] * dimensions[1];
+}
+
+int SPImage::getSpSize() {
+	return spSize;
 }
 
 int SPImage::rows() {
