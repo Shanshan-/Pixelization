@@ -18,8 +18,10 @@ public:
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num);
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar color);
 	cv::Scalar getColor();
-	std::vector<double> getImgCoor();
-	std::vector<int> getSpCoor();
+	double getImgXCoor();
+	double getImgYCoor();
+	int getSpXCoor();
+	int getSpYCoor();
 	int getSpNum();
 	void setColor(cv::Scalar color);
 	void setCentroid(double x, double y);

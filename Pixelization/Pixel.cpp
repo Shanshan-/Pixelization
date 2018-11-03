@@ -27,8 +27,12 @@ cv::Scalar Pixel::getColor() {
 	return color;
 }
 
-std::vector<int> Pixel::getCoor() {
-	return std::vector<int>(xcoor, ycoor);
+int Pixel::getXCoor() {
+	return xcoor;
+}
+
+int Pixel::getYCoor() {
+	return ycoor;
 }
 
 void Pixel::setSpNum(int num) {

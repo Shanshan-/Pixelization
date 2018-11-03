@@ -17,11 +17,11 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	//assign new superpixel values based on distance
 	//TODO: fix the offset problem because of pixels and centers not lining up
 	for (int num = 0; num < pixelImage->numPixels(); num++) {
-		std::vector<double> spCoor = pixelImage->getPixel(num).getImgCoor();
-		int lxBound = std::max(0, int(spCoor[0] - 1.5*pixelImage->getSpSize()));
-		int uxBound = std::min(pixelImage->cols(), int(std::ceil(spCoor[0] + 1.5*pixelImage->getSpSize())));
-		int lyBound = std::max(0, int(std::floor(spCoor[1] - 1.5*pixelImage->getSpSize())));
-		int uyBound = std::min(pixelImage->rows(), int(std::ceil(spCoor[1] + 1.5*pixelImage->getSpSize())));
+		auto sp = pixelImage->getPixel(num);
+		int lxBound = std::max(0, int(sp.getImgXCoor() - 1.5*pixelImage->getSpSize()));
+		int uxBound = std::min(pixelImage->cols(), int(std::ceil(sp.getImgXCoor() + 1.5*pixelImage->getSpSize())));
+		int lyBound = std::max(0, int(std::floor(sp.getImgYCoor() - 1.5*pixelImage->getSpSize())));
+		int uyBound = std::min(pixelImage->rows(), int(std::ceil(sp.getImgYCoor() + 1.5*pixelImage->getSpSize())));
 		for (int x = lxBound; x < uxBound; x++) {
 			for (int y = lyBound; y < uyBound; y++) {
 				double pixel_dist = distance(x, y, num);
@@ -91,8 +91,8 @@ double Slic::distance(int pixelx, int pixely, int spVal) {
 	double dc = sqrt(pow(dl, 2) + pow(da, 2) + pow(db, 2));
 
 	//find the positional difference
-	double dx = spPixel.getImgCoor()[0] - pixelx;
-	double dy = spPixel.getImgCoor()[1] - pixely;
+	double dx = spPixel.getImgXCoor() - pixelx;
+	double dy = spPixel.getImgYCoor() - pixely;
 	double dp = std::hypot(dx, dy);
 
 	//find total distance

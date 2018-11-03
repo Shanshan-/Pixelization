@@ -46,12 +46,20 @@ cv::Scalar SuperPixel::getColor() {
 	return cv::Scalar(ansx, ansy, ansz);
 }
 
-std::vector<double> SuperPixel::getImgCoor() {
-	return std::vector<double>(ximgcoor, yimgcoor);
+double SuperPixel::getImgXCoor() {
+	return ximgcoor;
 }
 
-std::vector<int> SuperPixel::getSpCoor() {
-	return std::vector<int>(xcoor, ycoor);
+double SuperPixel::getImgYCoor() {
+	return yimgcoor;
+}
+
+int SuperPixel::getSpXCoor() {
+	return xcoor;
+}
+
+int SuperPixel::getSpYCoor() {
+	return ycoor;
 }
 
 int SuperPixel::getSpNum() {

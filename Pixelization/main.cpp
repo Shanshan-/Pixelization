@@ -25,8 +25,6 @@ int main(int argc, char **argv) {
 	pimage.assignSP(2);
 	pimage.printAssignments();
 	SPImage spImage = SPImage(image.rows / 2, image.cols / 2, 2, meanColor);
-	auto tmp = spImage.getPixel(0).getSpCoor();
-	std::cout << tmp[0];
 	//TODO: assign centroid positions
 
 	//refine the superpixels

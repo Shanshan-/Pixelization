@@ -13,7 +13,8 @@ public:
 	Pixel(int x, int y, int num, cv::Scalar curColor);
 	int getSpNum();
 	cv::Scalar getColor();
-	std::vector<int> getCoor();
+	int getXCoor();
+	int getYCoor();
 	void setSpNum(int num);
 };
 

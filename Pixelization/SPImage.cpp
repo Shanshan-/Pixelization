@@ -60,7 +60,7 @@ int SPImage::cols() {
 /* PRINT FUNCTIONS */
 void SPImage::printCentroids() {
 	for (int x = 0; x < pixels.size(); x++) {
-		std::cout << "(" << (*pixels[x]).getImgCoor()[0]
-			<< "," << (*pixels[x]).getImgCoor()[1] << ")" << std::endl;
+		std::cout << "(" << (*pixels[x]).getImgXCoor()
+			<< "," << (*pixels[x]).getImgYCoor() << ")" << std::endl;
 	}
 }
