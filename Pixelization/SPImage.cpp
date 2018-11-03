@@ -10,13 +10,14 @@ SPImage::SPImage(int xdim, int ydim, int spSize, cv::Scalar meanColor) {
 	dimensions[0] = xdim;
 	dimensions[1] = ydim;
 	for (int x = 0; x < xdim * ydim; x++) {
-		pixels[x] = SuperPixel(x / xdim, x % xdim, spSize, x, meanColor);
+		pixels[x] = new SuperPixel(x / xdim, x % xdim, spSize, x, meanColor); //TODO: call delete later
 	}
 }
 
 /* METHODS */
 bool SPImage::expandPalette() {
 	//TODO: use MCDA algo here
+	std::cout << "SPImage.expandPalette() has not been implemented yet";
 	return FALSE;
 }
 
@@ -26,7 +27,7 @@ cv::vector<cv::Scalar> SPImage::getPalette() {
 }
 
 SuperPixel SPImage::getPixel(int x, int y) {
-	return pixels[x*dimensions[0] + y];
+	return *(pixels[x*dimensions[0] + y]);
 }
 
 int SPImage::rows() {
@@ -40,15 +41,7 @@ int SPImage::cols() {
 /* PRINT FUNCTIONS */
 void SPImage::printCentroids() {
 	for (int x = 0; x < pixels.size(); x++) {
-		std::cout << "(" << pixels[x].getImgCoor()[0] << "," << pixels[x].getImgCoor()[1] << ")" << std::endl;
-	}
-}
-
-void SPImage::printAssignments() {
-	for (int x = 0; x < dimensions[0]; x++) {
-		for (int y = 0; y < dimensions[1]; y++) {
-			std::cout << pixels[x*dimensions[0] + y].getSpNum() << "\t";
-		}
-		std::cout << std::endl;
+		std::cout << "(" << (*pixels[x]).getImgCoor()[0]
+			<< "," << (*pixels[x]).getImgCoor()[1] << ")" << std::endl;
 	}
 }

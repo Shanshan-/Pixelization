@@ -42,6 +42,8 @@ int main(int argc, char **argv) {
 
 	//generate image
 	Image pimage = Image(image);
+	pimage.assignSP(2);
+	pimage.printAssignments();
 
 	//start here
 	SPAssignments sp = SPAssignments(image.rows, image.cols, 2, meanColor, &image);

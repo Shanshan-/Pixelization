@@ -14,6 +14,6 @@ public:
 	int getSpNum();
 	cv::Scalar getColor();
 	std::vector<int> getCoor();
-	void getSpNum(int num);
+	void setSpNum(int num);
 };
 

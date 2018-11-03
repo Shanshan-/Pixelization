@@ -7,6 +7,7 @@ Pixel::Pixel() {
 Pixel::Pixel(int x, int y, cv::Scalar curColor) {
 	xcoor = x;
 	ycoor = y;
+	spNum = -1;
 	color = curColor;
 }
 
@@ -30,6 +31,6 @@ std::vector<int> Pixel::getCoor() {
 	return std::vector<int>(xcoor, ycoor);
 }
 
-void Pixel::getSpNum(int num) {
+void Pixel::setSpNum(int num) {
 	spNum = num;
 }

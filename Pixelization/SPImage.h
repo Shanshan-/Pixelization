@@ -5,7 +5,7 @@
 class SPImage {
 private:
 	int dimensions[2];
-	std::vector<SuperPixel> pixels;
+	std::vector<SuperPixel*> pixels;
 	std::vector<cv::Scalar> palette;
 
 public:
@@ -17,6 +17,5 @@ public:
 	int rows();
 	int cols();
 	void printCentroids();
-	void printAssignments();
 };
 

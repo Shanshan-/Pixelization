@@ -22,6 +22,8 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	ycoor = spy;
 	spNum = num;
 	size = pixSize;
+	color1 = NULL;
+	color2 = NULL;
 }
 
 SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar color) {
