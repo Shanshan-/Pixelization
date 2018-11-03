@@ -1,6 +1,6 @@
-#include "SPAssignments.h"
+#include "Slic.h"
 
-SPAssignments::SPAssignments(int rows, int cols, int pixSize, cv::Scalar defVal, cv::Mat *img) {
+Slic::Slic(int rows, int cols, int pixSize, cv::Scalar defVal, cv::Mat *img) {
 	//std::cout << img << std::endl; //outputs the address of the image
 	//std::cout << &img << std::endl; //outputs storage location of the variable
 	//initialize variables
@@ -37,7 +37,7 @@ SPAssignments::SPAssignments(int rows, int cols, int pixSize, cv::Scalar defVal,
 	pixelSize = pixSize;
 }
 
-double SPAssignments::distance(int pixelx, int pixely, int centroid) {
+double Slic::distance(int pixelx, int pixely, int centroid) {
 	//find the color distance
 	//std::cout << image << std::endl; //gives address of image
 	//std::cout << &image << std::endl; //gives address of image variable
@@ -58,7 +58,7 @@ double SPAssignments::distance(int pixelx, int pixely, int centroid) {
 	return dc + 45 * pow(pixelSize, 2) * dp;
 }
 
-void SPAssignments::refine() { //runs one step of SLIC superpixel refinement
+void Slic::refine() { //runs one step of SLIC superpixel refinement
 	//TODO: fill in the refinement process from section 4.3, or contents of SLIC paper
 	// could also potentially move this to be outside this class
 
@@ -129,7 +129,7 @@ void SPAssignments::refine() { //runs one step of SLIC superpixel refinement
 	//smooth color representatives of super pixels
 }
 
-void SPAssignments::printAssignments() {
+void Slic::printAssignments() {
 	for (int x = 0; x < spNum.size(); x++) {
 		for (int y = 0; y < spNum[0].size(); y++) {
 			std::cout << spNum[x][y] << "\t";
@@ -138,7 +138,7 @@ void SPAssignments::printAssignments() {
 	}
 }
 
-void SPAssignments::printCenters() {
+void Slic::printCenters() {
 	for (int x = 0; x < centers.size(); x++) {
 		std::cout << "(" << centers[x][0] << "," << centers[x][1] << ")" << std::endl;
 	}

@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
 	SPImage spImage = SPImage(image.rows / 2, image.cols / 2, 2, meanColor);
 
 	//start here
-	SPAssignments sp = SPAssignments(image.rows, image.cols, 2, meanColor, &image);
-	SPAssignments sp1 = SPAssignments(8, 4, 2, meanColor, &image);
+	Slic sp = Slic(image.rows, image.cols, 2, meanColor, &image);
+	Slic sp1 = Slic(8, 4, 2, meanColor, &image);
 	//sp1.printAssignments();
 	sp.refine();
 

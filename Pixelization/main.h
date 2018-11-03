@@ -1,7 +1,7 @@
 #pragma once
 #include "base.h"
 #include "SuperPixel.h"
-#include "SPAssignments.h"
+#include "Slic.h"
 #include "SPImage.h"
 #include "Image.h"
 #include "Palette.h"

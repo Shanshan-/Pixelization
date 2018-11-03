@@ -127,7 +127,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="Pixel.cpp" />
-    <ClCompile Include="SPAssignments.cpp" />
+    <ClCompile Include="Slic.cpp" />
     <ClCompile Include="SPImage.cpp" />
     <ClCompile Include="SuperPixel.cpp" />
   </ItemGroup>
@@ -141,7 +141,7 @@
     <ClInclude Include="Palette.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SPAssignments.h" />
+    <ClInclude Include="Slic.h" />
     <ClInclude Include="SPImage.h" />
     <ClInclude Include="SuperPixel.h" />
   </ItemGroup>
