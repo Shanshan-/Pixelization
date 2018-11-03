@@ -11,6 +11,7 @@ public:
 	Image();
 	Image(cv::Mat image);
 	std::vector<Pixel*> getSpPixels(int num);
+	cv::Scalar getAvgColor(int spNum);
 	void assignSP(int spSize);
 	Pixel getPixel(int x, int y);
 	int rows();

@@ -39,6 +39,11 @@ void Image::assignSP(int spSize) {
 	}
 }
 
+cv::Scalar Image::getAvgColor(int spNum) {
+	std::cout << "Image.getAvgColor() has not been implemented yet.";
+	return NULL;
+}
+
 /* GETTERS AND SETTERS */
 Pixel Image::getPixel(int x, int y) {
 	return *(pixels[x*dimensions[0] + y]);
