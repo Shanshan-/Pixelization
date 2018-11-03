@@ -1,84 +1,32 @@
 #include "Slic.h"
 
-Slic::Slic(int rows, int cols, int pixSize, cv::Scalar defVal, cv::Mat *img) {
-	//std::cout << img << std::endl; //outputs the address of the image
-	//std::cout << &img << std::endl; //outputs storage location of the variable
-	//initialize variables
-	int sRows = std::floor(rows / pixSize);
-	int sCols = std::floor(cols / pixSize);
-	spNum.assign(rows, std::vector<int>(cols, -1));
-	color.assign(sRows*sCols, cv::Scalar(defVal));
-	centers.assign(sRows*sCols, std::vector<double>(2, 0.0));
+Slic::Slic() {}
 
-	//set initial values for the spNum matrix
-	for (int x = 0; x < rows; x++) {
-		for (int y = 0; y < cols; y++) {
-			int tmp1 = std::floor(x / pixSize) * sCols;
-			int tmp2 = std::floor(y / pixSize);
-			spNum[x][y] = tmp1 + tmp2;
-		}
-	}
-
-	//generate the superpixel centers
-	double offset = pixSize / 2;
-	for (int x = 0; x < sRows*sCols; x++) {
-		double centerx = offset + std::floor(x / sCols) * pixSize;
-		double centery = offset + (x % sCols) * pixSize;
-		centers[x] = { centerx, centery };
-	}
-	printCenters();
-
-	//initialize all other variables
-	image = img;
-	numRows = rows;
-	numCols = cols;
-	numSRows = sRows;
-	numSCols = sCols;
-	pixelSize = pixSize;
-}
-
-double Slic::distance(int pixelx, int pixely, int centroid) {
-	//find the color distance
-	//std::cout << image << std::endl; //gives address of image
-	//std::cout << &image << std::endl; //gives address of image variable
-	//std::cout << *image << std::endl; //gives content of image
-	cv::Mat img = *image;
-	auto pixelColor = img.at<cv::Vec3b>(pixelx, pixely);
-	double dl = pixelColor[0] - color[centroid][0];
-	double da = pixelColor[1] - color[centroid][1];
-	double db = pixelColor[2] - color[centroid][2];
-	double dc = sqrt(pow(dl, 2) + pow(da, 2) + pow(db, 2));
-
-	//find the positional difference
-	double dx = centers[centroid][0] - pixelx;
-	double dy = centers[centroid][1] - pixely;
-	double dp = std::hypot(dx, dy);
-
-	//find total distance
-	return dc + 45 * pow(pixelSize, 2) * dp;
+Slic::Slic(Image* img1, SPImage* img2) {
+	origImage = img1;
+	pixelImage = img2;
 }
 
 void Slic::refine() { //runs one step of SLIC superpixel refinement
 	//TODO: fill in the refinement process from section 4.3, or contents of SLIC paper
-	// could also potentially move this to be outside this class
 
-	//generate storage vector to be used (to store distances and sverage for calculation purposes)
+	//generate storage vector to be used (to store distances and average for calculation purposes)
 	std::vector<std::vector<double>> tmp;
-	tmp.assign(numRows, std::vector<double>(numCols, INT_MAX));
+	tmp.assign(origImage->rows(), std::vector<double>(origImage->cols(), INT_MAX));
 
 	//assign new superpixel values based on distance
 	//TODO: fix the offset problem because of pixels and centers not lining up
-	for (int center = 0; center < centers.size(); center++) {
-		int lxBound = std::max(0, int(std::floor(centers[center][0] - 1.5*pixelSize)));
-		int uxBound = std::min(numCols, int(std::ceil(centers[center][0] + 1.5*pixelSize)));
-		int lyBound = std::max(0, int(std::floor(centers[center][1] - 1.5*pixelSize)));
-		int uyBound = std::min(numRows, int(std::ceil(centers[center][1] + 1.5*pixelSize)));
+	for (int num = 0; num < pixelImage->numPixels(); num++) {
+		int lxBound = std::max(0, int(std::floor(centers[num][0] - 1.5*pixelSize)));
+		int uxBound = std::min(numCols, int(std::ceil(centers[num][0] + 1.5*pixelSize)));
+		int lyBound = std::max(0, int(std::floor(centers[num][1] - 1.5*pixelSize)));
+		int uyBound = std::min(numRows, int(std::ceil(centers[num][1] + 1.5*pixelSize)));
 		for (int x = lxBound; x < uxBound; x++) {
 			for (int y = lyBound; y < uyBound; y++) {
-				double pixel_dist = distance(x, y, center);
+				double pixel_dist = distance(x, y, num);
 				if (pixel_dist <= tmp[x][y]) {
 					tmp[x][y] = pixel_dist;
-					spNum[x][y] = center;
+					spNum[x][y] = num;
 				}
 			}
 		}
@@ -129,17 +77,23 @@ void Slic::refine() { //runs one step of SLIC superpixel refinement
 	//smooth color representatives of super pixels
 }
 
-void Slic::printAssignments() {
-	for (int x = 0; x < spNum.size(); x++) {
-		for (int y = 0; y < spNum[0].size(); y++) {
-			std::cout << spNum[x][y] << "\t";
-		}
-		std::cout << std::endl;
-	}
-}
+double Slic::distance(int pixelx, int pixely, int spVal) {
+	auto imgPixel = origImage->getPixel(pixelx, pixely);
+	auto spPixel = pixelImage->getPixel(spVal);
 
-void Slic::printCenters() {
-	for (int x = 0; x < centers.size(); x++) {
-		std::cout << "(" << centers[x][0] << "," << centers[x][1] << ")" << std::endl;
-	}
+	//find the color distance
+	auto color1 = imgPixel.getColor();
+	auto color2 = spPixel.getColor();
+	double dl = color1[0] - color2[0];
+	double da = color1[1] - color2[1];
+	double db = color1[2] - color2[2];
+	double dc = sqrt(pow(dl, 2) + pow(da, 2) + pow(db, 2));
+
+	//find the positional difference
+	double dx = spPixel.getImgCoor()[0] - pixelx;
+	double dy = spPixel.getImgCoor()[1] - pixely;
+	double dp = std::hypot(dx, dy);
+
+	//find total distance
+	return dc + 45 * sqrt(pixelImage->numPixels() / origImage->numPixels()) * dp;
 }

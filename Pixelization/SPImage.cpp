@@ -21,6 +21,11 @@ bool SPImage::expandPalette() {
 	return FALSE;
 }
 
+void SPImage::assignCentroids() {
+	//TODO: do this
+	std::cout << "SPImage.assignCentroids has not been implemented yet.";
+}
+
 /* GETTERS AND SETTERS */
 cv::vector<cv::Scalar> SPImage::getPalette() {
 	return palette;
@@ -28,6 +33,14 @@ cv::vector<cv::Scalar> SPImage::getPalette() {
 
 SuperPixel SPImage::getPixel(int x, int y) {
 	return *(pixels[x*dimensions[0] + y]);
+}
+
+SuperPixel SPImage::getPixel(int num) {
+	return *(pixels[num]);
+}
+
+int SPImage::numPixels() {
+	return dimensions[0] * dimensions[1];
 }
 
 int SPImage::rows() {

@@ -40,6 +40,7 @@ void Image::assignSP(int spSize) {
 }
 
 cv::Scalar Image::getAvgColor(int spNum) {
+	//TODO: implement this
 	std::cout << "Image.getAvgColor() has not been implemented yet.";
 	return NULL;
 }
@@ -47,6 +48,10 @@ cv::Scalar Image::getAvgColor(int spNum) {
 /* GETTERS AND SETTERS */
 Pixel Image::getPixel(int x, int y) {
 	return *(pixels[x*dimensions[0] + y]);
+}
+
+int Image::numPixels() {
+	return dimensions[0] * dimensions[1];
 }
 
 int Image::rows() {

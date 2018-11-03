@@ -18,11 +18,16 @@ int main(int argc, char **argv) {
 	cv::Scalar meanColor = getMeanColor(image);
 	std::vector<cv::Scalar> palette(paletteSize);
 
+	//TODO: find the starting temperature
+
 	//generate image classes to work with
 	Image pimage = Image(image);
 	pimage.assignSP(2);
 	pimage.printAssignments();
 	SPImage spImage = SPImage(image.rows / 2, image.cols / 2, 2, meanColor);
+	//TODO: assign centroid positions
+
+	//refine the superpixels
 
 	//start here
 	Slic sp = Slic(image.rows, image.cols, 2, meanColor, &image);
