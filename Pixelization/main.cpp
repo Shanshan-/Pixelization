@@ -4,13 +4,15 @@ int main(int argc, char **argv) {
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	int paletteSize = 8;
-	int spSize = 5;
+	int spSize = 3;
 
 	//load image
-	cv::Mat image = cv::imread(IMG_PATH "nemi.png");
+	cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
 	//TODO: program breaks if length and width are not exact multiples of spSize
 	if (image.empty()) {
+		char c;
 		std::cout << "Could not open or find the image" << std::endl;
+		std::cin >> c;
 		exit(-1);
 	}
 

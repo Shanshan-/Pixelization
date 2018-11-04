@@ -49,7 +49,7 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	//setup extra image to be used for color smoothing
 	cv::Mat fimage = cv::Mat(pixelImage->rows(), pixelImage->cols(), CV_8UC3);
 
-	//adjust centroid locations and color valules
+	//adjust centroid locations and color values
 	for (int x = 0; x < pixelImage->numPixels(); x++) {
 		//get 4-neighbor positions
 		double nadj[2] = { 0.0, 0.0 };
@@ -108,6 +108,15 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 		fimage.at<cv::Vec3b>(tmpx, tmpy) = color;
 	}
 
+	//bilaterally filter fimage //Note: difference better noticible at larger scales/images
+	int fd = pixelImage->getSpSize();
+	cv::Mat fimage2;
+	cv::bilateralFilter(fimage, fimage2, fd, 10*fd, 10*fd);
+	//TODO: program will break here if fd and 10*fd not factors of fimage.shape
+
+	//assign superpixel values
+
+	//preview image
 	cv::Mat outImg;
 	cv::String windowName = "Image Results"; //Name of the window
 	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
@@ -118,9 +127,13 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	cv::waitKey(0); // Wait for any keystroke in the window
 	cv::destroyWindow(windowName); //destroy the created window
 
-	//bilaterally filter fimage
-
-	//assign superpixel values
+	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
+	cv::moveWindow(windowName, 30, 40);
+	cv::resize(fimage2, outImg, cv::Size(), 10, 10, CV_INTER_NN);
+	cv::cvtColor(outImg, outImg, cv::COLOR_Lab2BGR);
+	cv::imshow(windowName, outImg); // Show our image inside the created window.
+	cv::waitKey(0); // Wait for any keystroke in the window
+	cv::destroyWindow(windowName); //destroy the created window
 }
 
 double Slic::distance(int pixelx, int pixely, int spVal) {
