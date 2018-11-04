@@ -13,6 +13,7 @@ SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar color)
 	size = pixSize;
 	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
 	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+	paletteColor = 0;
 }
 
 SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num) {
@@ -24,6 +25,7 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	size = pixSize;
 	color1 = NULL;
 	color2 = NULL;
+	paletteColor = -1;
 }
 
 SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar color) {
@@ -35,6 +37,7 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	size = pixSize;
 	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
 	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+	paletteColor = 0;
 }
 
 
@@ -44,6 +47,10 @@ cv::Scalar SuperPixel::getColor() {
 	double ansy = (color1[1] + color2[1]) / 2;
 	double ansz = (color1[2] + color2[2]) / 2;
 	return cv::Scalar(ansx, ansy, ansz);
+}
+
+int SuperPixel::getPaletteColor() {
+	return paletteColor;
 }
 
 double SuperPixel::getImgXCoor() {
@@ -69,6 +76,10 @@ int SuperPixel::getSpNum() {
 void SuperPixel::setColor(cv::Scalar color) {
 	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
 	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+}
+
+void SuperPixel::setPaletteColor(int color) {
+	paletteColor = color;
 }
 
 void SuperPixel::setCentroid(double x, double y) {

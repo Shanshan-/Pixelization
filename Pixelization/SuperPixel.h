@@ -11,6 +11,7 @@ private:
 	int size;
 	cv::Scalar color1;
 	cv::Scalar color2;
+	int paletteColor;
 
 public:
 	SuperPixel();
@@ -18,12 +19,14 @@ public:
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num);
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar color);
 	cv::Scalar getColor();
+	int getPaletteColor();
 	double getImgXCoor();
 	double getImgYCoor();
 	int getSpXCoor();
 	int getSpYCoor();
 	int getSpNum();
 	void setColor(cv::Scalar color);
+	void setPaletteColor(int color);
 	void setCentroid(double x, double y);
 };
 
