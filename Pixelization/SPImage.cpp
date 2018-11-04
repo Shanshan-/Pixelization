@@ -11,8 +11,12 @@ SPImage::SPImage(int xdim, int ydim, int size, cv::Scalar meanColor) {
 	dimensions[1] = ydim;
 	spSize = size;
 	pixels.resize(xdim * ydim);
+	double offset = size / 2;
 	for (int x = 0; x < xdim * ydim; x++) {
-		pixels[x] = new SuperPixel(x / xdim, x % xdim, spSize, x, meanColor); //TODO: call delete later
+		//TODO: determine the centroid coordinates
+		double centerx = offset + std::floor(x / ydim) * size;
+		double centery = offset + (x % ydim) * size;
+		pixels[x] = new SuperPixel(centerx, centery, x / xdim, x % xdim, spSize, x, meanColor); //TODO: call delete later
 	}
 }
 
@@ -34,7 +38,7 @@ cv::vector<cv::Scalar> SPImage::getPalette() {
 }
 
 SuperPixel SPImage::getPixel(int x, int y) {
-	return *(pixels[x*dimensions[0] + y]);
+	return *(pixels[x*dimensions[1] + y]);
 }
 
 SuperPixel SPImage::getPixel(int num) {

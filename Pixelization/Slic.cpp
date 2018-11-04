@@ -34,48 +34,93 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	}
 	origImage->printAssignments();
 
-	////generate average positions and colors of each centroid
-	//tmp.assign(centers.size(), std::vector<double>(6, 0));
-	//for (int pos = 0; pos < numRows*numCols; pos++) {
-	//	int spGroup = spNum[std::floor(pos / numRows)][pos % numRows];
-	//	tmp[pos][0] = color[spGroup][0];
-	//	tmp[pos][1] = color[spGroup][1];
-	//	tmp[pos][2] = color[spGroup][2];
-	//	tmp[pos][3] = std::floor(pos / numRows);
-	//	tmp[pos][4] = pos % numRows;
-	//	tmp[pos][5] += 1;
-	//}
+	//generate new average positions and colors of each centroid
+	tmp.assign(pixelImage->numPixels(), std::vector<double>(6, 0));
+	for (int pos = 0; pos < origImage->numPixels(); pos++) {
+		auto pix = origImage->getPixel(pos / origImage->cols(), pos % origImage->cols());
+		tmp[pix.getSpNum()][0] += pix.getColor()[0];		//l value agg
+		tmp[pix.getSpNum()][1] += pix.getColor()[1];		//a value agg
+		tmp[pix.getSpNum()][2] += pix.getColor()[2];		//b value agg
+		tmp[pix.getSpNum()][3] += pix.getXCoor();		//x coor agg
+		tmp[pix.getSpNum()][4] += pix.getYCoor();		//y coor agg
+		tmp[pix.getSpNum()][5] += 1;					//counter
+	}
 
-	////adjust centroid locations and color valules
-	//for (int x = 0; x < centers.size(); x++) {
-	//	//get 4-neighbor positions
-	//	double nadj[2], sadj[2], wadj[2], eadj[2];
-	//	if (x >= numSCols)
-	//		double nadj[] = { centers[x - numSCols][0], centers[x - numSCols][1] };
-	//	else
-	//		double nadj[] = { 2 * tmp[x][0] - centers[x + numSCols][0], 2 * tmp[x][1] - centers[x + numSCols][1] };
-	//	if (x < centers.size() - numSCols)
-	//		double sadj[] = { centers[x + numSCols][0], centers[x + numSCols][1] };
-	//	else
-	//		double sadj[] = { 2 * tmp[x][0] - centers[x - numSCols][0], 2 * tmp[x][0] - centers[x - numSCols][1] };
-	//	if (x % numSCols != 0)
-	//		double wadj[] = { centers[x - numSRows][0], centers[x - numSRows][1] };
-	//	else
-	//		double wadj[] = { 2 * tmp[x][0] - centers[x + numSRows][0], 2 * tmp[x][0] - centers[x + numSRows][1] };
-	//	if (x % numSCols == numSCols - 1)
-	//		double eadj[] = { centers[x + numSRows][0], centers[x + numSRows][1] };
-	//	else
-	//		double eadj[] = { 2 * tmp[x][0] - centers[x - numSRows][0], 2 * tmp[x][0] - centers[x - numSRows][1] };
+	//setup extra image to be used for color smoothing
+	cv::Mat fimage = cv::Mat(pixelImage->rows(), pixelImage->cols(), CV_8UC3);
+
+	//adjust centroid locations and color valules
+	for (int x = 0; x < pixelImage->numPixels(); x++) {
+		//get 4-neighbor positions
+		double nadj[2] = { 0.0, 0.0 };
+		if (x >= pixelImage->cols()) {
+			nadj[0] = pixelImage->getPixel(x - pixelImage->cols()).getImgXCoor();
+			nadj[1] = pixelImage->getPixel(x - pixelImage->cols()).getImgYCoor();
+		}
+		else {
+			nadj[0] = 2 * pixelImage->getPixel(x).getImgXCoor() - pixelImage->getPixel(x + pixelImage->cols()).getImgXCoor();
+			nadj[1] = 2 * pixelImage->getPixel(x).getImgYCoor() - pixelImage->getPixel(x + pixelImage->cols()).getImgYCoor();
+		}
+
+		double sadj[2] = { 0.0, 0.0 };
+		if (x < pixelImage->numPixels() - pixelImage->cols()) {
+			sadj[0] = pixelImage->getPixel(x + pixelImage->cols()).getImgXCoor();
+			sadj[1] = pixelImage->getPixel(x + pixelImage->cols()).getImgYCoor();
+		}
+		else {
+			sadj[0] = 2 * pixelImage->getPixel(x).getImgXCoor() - pixelImage->getPixel(x - pixelImage->cols()).getImgXCoor();
+			sadj[1] = 2 * pixelImage->getPixel(x).getImgYCoor() - pixelImage->getPixel(x - pixelImage->cols()).getImgYCoor();
+		}
+
+		double wadj[2] = { 0.0, 0.0 };
+		if (x % pixelImage->cols() != 0) {
+			wadj[0] = pixelImage->getPixel(x - 1).getImgXCoor();
+			wadj[1] = pixelImage->getPixel(x - 1).getImgYCoor();
+		}
+		else {
+			wadj[0] = 2 * pixelImage->getPixel(x).getImgXCoor() - pixelImage->getPixel(x + 1).getImgXCoor();
+			wadj[1] = 2 * pixelImage->getPixel(x).getImgYCoor() - pixelImage->getPixel(x + 1).getImgYCoor();
+		}
+
+		double eadj[2] = { 0.0, 0.0 };
+		if (x % pixelImage->cols() != pixelImage->cols() - 1) {
+			eadj[0] = pixelImage->getPixel(x + 1).getImgXCoor();
+			eadj[1] = pixelImage->getPixel(x + 1).getImgYCoor();
+		}
+		else {
+			eadj[0] = 2 * pixelImage->getPixel(x).getImgXCoor() - pixelImage->getPixel(x - 1).getImgXCoor();
+			eadj[1] = 2 * pixelImage->getPixel(x).getImgYCoor() - pixelImage->getPixel(x - 1).getImgYCoor();
+		}
 
 
-	//	//get average position and laplacian smooth towards grid structure
-	//	double newPos[] = { tmp[x][3] / tmp[x][5], tmp[x][4] / tmp[x][5] };
-	//	double avgPos[] = { (nadj[0] + sadj[0] + wadj[0] + eadj[0]) / 4, (nadj[1] + sadj[1] + wadj[1] + eadj[1]) / 4 };
+		//get average position and laplacian smooth towards grid structure
+		int ratio[] = RATIO; //used for section formula
+		double tmpPos[] = { tmp[x][3] / tmp[x][5], tmp[x][4] / tmp[x][5] };
+		double avgPos[] = { (nadj[0] + sadj[0] + wadj[0] + eadj[0]) / 4, (nadj[1] + sadj[1] + wadj[1] + eadj[1]) / 4 };
+		double newPos[] = { (ratio[0] * avgPos[0] + ratio[1] * tmpPos[0]) / (ratio[0] + ratio[1])
+			, (ratio[0] * avgPos[1] + ratio[1] * tmpPos[1]) / (ratio[0] + ratio[1]) };
 
-		//get average color and smooth
-	//}
+		//get average color and add to filter image
+		cv::Scalar avgColor = cv::Scalar(tmp[x][0] / tmp[x][5], tmp[x][1] / tmp[x][5], tmp[x][2] / tmp[x][5]);
+		cv::Vec3b color = cv::Vec3b((uchar)avgColor[0], (uchar)avgColor[1], (uchar)avgColor[2]);
+		int tmpx = int(x / pixelImage->cols());
+		int tmpy = x % pixelImage->cols();
+		fimage.at<cv::Vec3b>(tmpx, tmpy) = color;
+	}
 
-	//smooth color representatives of super pixels
+	cv::Mat outImg;
+	cv::String windowName = "Image Results"; //Name of the window
+	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
+	cv::moveWindow(windowName, 30, 40);
+	cv::resize(fimage, outImg, cv::Size(), 10, 10, CV_INTER_NN);
+	cv::cvtColor(outImg, outImg, cv::COLOR_Lab2BGR);
+	cv::imshow(windowName, outImg); // Show our image inside the created window.
+	cv::waitKey(0); // Wait for any keystroke in the window
+	cv::destroyWindow(windowName); //destroy the created window
+
+	//bilaterally filter fimage
+
+	//assign superpixel values
 }
 
 double Slic::distance(int pixelx, int pixely, int spVal) {

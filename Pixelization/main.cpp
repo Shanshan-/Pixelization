@@ -3,18 +3,19 @@
 int main(int argc, char **argv) {
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
-	int spRows = 10;
-	int spCols = 10;
 	int paletteSize = 8;
+	int spSize = 5;
 
 	//load image
-	cv::Mat image = cv::imread(IMG_PATH "flower.png");
+	cv::Mat image = cv::imread(IMG_PATH "nemi.png");
+	//TODO: program breaks if length and width are not exact multiples of spSize
 	if (image.empty()) {
 		std::cout << "Could not open or find the image" << std::endl;
 		exit(-1);
 	}
 
 	//determine the mean color of image, and generate the palette
+	cv::cvtColor(image, image, cv::COLOR_BGR2Lab);
 	cv::Scalar meanColor = getMeanColor(image);
 	std::vector<cv::Scalar> palette(paletteSize);
 
@@ -22,9 +23,10 @@ int main(int argc, char **argv) {
 
 	//generate image classes to work with
 	Image pimage = Image(image);
-	pimage.assignSP(2);
+	pimage.assignSP(spSize);
 	pimage.printAssignments();
-	SPImage spImage = SPImage(image.rows / 2, image.cols / 2, 2, meanColor);
+	SPImage spImage = SPImage(image.rows / spSize, image.cols / spSize, spSize, meanColor);
+	spImage.printCentroids();
 	//TODO: assign centroid positions
 
 	//refine the superpixels
@@ -38,11 +40,13 @@ int main(int argc, char **argv) {
 	//sp.refineSP();
 
 	//displaying image
+	//TODO: move this process into its own function
 	cv::Mat outImg;
-	cv::String windowName = "The Guitar"; //Name of the window
+	cv::String windowName = "Image Results"; //Name of the window
 	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
 	cv::moveWindow(windowName, 30, 40);
-	cv::resize(image, outImg, cv::Size(), 0.4, 0.4);
+	cv::resize(image, outImg, cv::Size(), 10, 10, CV_INTER_NN);
+	cv::cvtColor(outImg, outImg, cv::COLOR_Lab2BGR);
 	cv::imshow(windowName, outImg); // Show our image inside the created window.
 	cv::waitKey(0); // Wait for any keystroke in the window
 	cv::destroyWindow(windowName); //destroy the created window

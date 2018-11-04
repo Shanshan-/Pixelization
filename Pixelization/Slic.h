@@ -3,6 +3,8 @@
 #include "Image.h"
 #include "SPImage.h"
 
+#define RATIO { 4, 6 } //used for moving centroid
+
 class Slic {
 private:
 	Image* origImage;

@@ -12,7 +12,7 @@ Image::Image(cv::Mat image) {
 		for (int y = 0; y < image.cols; y++) {
 			cv::Scalar color = cv::Scalar(image.at<cv::Vec3b>(x, y)[0],
 				image.at<cv::Vec3b>(x, y)[1], image.at<cv::Vec3b>(x, y)[2]);
-			pixels[x*dimensions[0] + y] = new Pixel(x, y, color); //TODO: call delete later
+			pixels[x*dimensions[1] + y] = new Pixel(x, y, color); //TODO: call delete later
 		}
 	}
 }
@@ -33,8 +33,8 @@ std::vector<Pixel*> Image::getSpPixels(int num) {
 
 void Image::assignSP(int spSize) {
 	for (int x = 0; x < pixels.size(); x++) {
-		int tmp1 = int((x / dimensions[0]) / spSize) * (dimensions[1] / spSize);
-		int tmp2 = int((x % dimensions[0]) / spSize);
+		int tmp1 = int((x / dimensions[1]) / spSize) * (dimensions[1] / spSize);
+		int tmp2 = int((x % dimensions[1]) / spSize);
 		(*pixels[x]).setSpNum(tmp1 + tmp2);
 	}
 }
@@ -47,7 +47,7 @@ cv::Scalar Image::getAvgColor(int spNum) {
 
 /* GETTERS AND SETTERS */
 Pixel Image::getPixel(int x, int y) {
-	return *(pixels[x*dimensions[0] + y]);
+	return *(pixels[x*dimensions[1] + y]);
 }
 
 int Image::numPixels() {
@@ -66,7 +66,7 @@ int Image::cols() {
 void Image::printAssignments() {
 	for (int x = 0; x < dimensions[0]; x++) {
 		for (int y = 0; y < dimensions[1]; y++) {
-			std::cout << (*pixels[x*dimensions[0] + y]).getSpNum() << "\t";
+			std::cout << (*pixels[x*dimensions[1] + y]).getSpNum() << "\t";
 		}
 		std::cout << std::endl;
 	}
