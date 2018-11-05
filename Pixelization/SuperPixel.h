@@ -11,7 +11,7 @@ private:
 	int size;
 	cv::Scalar color;
 	int paletteColor;
-	std::vector<double> probs;
+	std::vector<double> condProbs;
 
 public:
 	SuperPixel();

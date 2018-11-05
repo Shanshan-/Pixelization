@@ -3,3 +3,4 @@
 
 TODOs
 - add an image abstract class (rename currt Image class too)
+- perturbing of color in palette is along principal component axis in LAB space
