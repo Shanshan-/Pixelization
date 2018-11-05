@@ -9,13 +9,12 @@ private:
 	int ycoor; //in pixel image
 	int spNum;
 	int size;
-	cv::Scalar color1;
-	cv::Scalar color2;
+	cv::Scalar color;
 	int paletteColor;
 
 public:
 	SuperPixel();
-	SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar color);
+	SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar curColor);
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num);
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar color);
 	cv::Scalar getColor();

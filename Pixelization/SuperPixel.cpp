@@ -6,13 +6,12 @@ SuperPixel::SuperPixel() {
 	exit(-1);
 }
 
-SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar color) {
+SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar curColor) {
 	xcoor = spx;
 	ycoor = spy;
 	spNum = num;
 	size = pixSize;
-	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
-	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+	color = curColor;
 	paletteColor = 0;
 }
 
@@ -23,30 +22,25 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	ycoor = spy;
 	spNum = num;
 	size = pixSize;
-	color1 = NULL;
-	color2 = NULL;
+	color = NULL;
 	paletteColor = -1;
 }
 
-SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar color) {
+SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar curColor) {
 	ximgcoor = x;
 	yimgcoor = y;
 	xcoor = spx;
 	ycoor = spy; 
 	spNum = num;
 	size = pixSize;
-	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
-	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+	color = curColor;
 	paletteColor = 0;
 }
 
 
 /* GETTERS AND SETTERS */
 cv::Scalar SuperPixel::getColor() {
-	double ansx = (color1[0] + color2[0]) / 2;
-	double ansy = (color1[1] + color2[1]) / 2;
-	double ansz = (color1[2] + color2[2]) / 2;
-	return cv::Scalar(ansx, ansy, ansz);
+	return color;
 }
 
 int SuperPixel::getPaletteColor() {
@@ -73,18 +67,16 @@ int SuperPixel::getSpNum() {
 	return spNum;
 }
 
-void SuperPixel::setColor(cv::Scalar color) {
-	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
-	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+void SuperPixel::setColor(cv::Scalar newColor) {
+	color = newColor;
 }
 
-void SuperPixel::setColor(cv::Vec3b color) {
-	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
-	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+void SuperPixel::setColor(cv::Vec3b newColor) {
+	color = cv::Scalar(newColor[0], newColor[1], newColor[2]);
 }
 
-void SuperPixel::setPaletteColor(int color) {
-	paletteColor = color;
+void SuperPixel::setPaletteColor(int newColor) {
+	paletteColor = newColor;
 }
 
 void SuperPixel::setCentroid(double x, double y) {

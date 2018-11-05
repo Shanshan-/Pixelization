@@ -5,14 +5,15 @@
 
 class Palette {
 private:
-	std::vector<cv::Scalar> colors;
+	std::vector<std::vector<cv::Scalar>> colors;
 	Image* origImage;
 	SPImage* pixelImage;
+	double temp;
 
 public:
 	Palette();
-	Palette(cv::Scalar color);
-	Palette(cv::Vec3b color);
+	Palette(Image* img1, SPImage* img2, int size, double cT, cv::Scalar startColor);
+	Palette(Image* img1, SPImage* img2, int size, double cT, cv::Vec3b startColor);
 	void refinePalette();
 	void expandPalette();
 };

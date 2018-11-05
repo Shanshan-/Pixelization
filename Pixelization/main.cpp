@@ -35,6 +35,10 @@ int main(int argc, char **argv) {
 	Slic slic = Slic(&pimage, &spImage);
 	slic.refineSP();
 
+	//refine the palette
+	Palette palette = Palette(&pimage, &spImage, paletteSize, image.at<cv::Vec3b>(0, 0));
+	
+
 	//start here
 	//Slic sp = Slic(image.rows, image.cols, 2, meanColor, &image);
 	//Slic sp1 = Slic(8, 4, 2, meanColor, &image);
@@ -69,4 +73,10 @@ cv::Scalar getMeanColor(cv::Mat image) {
 	result[1] = result[1] / (image.rows * image.cols);
 	result[2] = result[2] / (image.rows * image.cols);
 	return result;
+}
+
+double getStartTemp(cv::Mat image) {
+	using namespace cv;
+	//PCA pca = cv::PCA(image, cv::Mat(), CV_PCA_DATA_AC_ROW);
+	return MAXINT;
 }

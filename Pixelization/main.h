@@ -10,3 +10,4 @@
 #define IMG_PATH "../Images/"
 
 cv::Scalar getMeanColor(cv::Mat image);
+double getStartTemp(cv::Mat image);
