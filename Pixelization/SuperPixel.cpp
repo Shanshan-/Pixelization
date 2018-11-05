@@ -13,6 +13,7 @@ SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar curCol
 	size = pixSize;
 	color = curColor;
 	paletteColor = 0;
+	probs.push_back({ 1.0 });
 }
 
 SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num) {
@@ -23,7 +24,8 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	spNum = num;
 	size = pixSize;
 	color = NULL;
-	paletteColor = -1;
+	paletteColor = 0;
+	probs.push_back({ 1.0 });
 }
 
 SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar curColor) {
@@ -35,6 +37,7 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	size = pixSize;
 	color = curColor;
 	paletteColor = 0;
+	probs.push_back({ 1.0 });
 }
 
 
@@ -67,6 +70,10 @@ int SuperPixel::getSpNum() {
 	return spNum;
 }
 
+std::vector<double> SuperPixel::getPaletteProbs() {
+	return probs;
+}
+
 void SuperPixel::setColor(cv::Scalar newColor) {
 	color = newColor;
 }
@@ -82,4 +89,10 @@ void SuperPixel::setPaletteColor(int newColor) {
 void SuperPixel::setCentroid(double x, double y) {
 	ximgcoor = x;
 	yimgcoor = y;
+}
+
+void SuperPixel::setPaletteProb(int num, double prob) {
+	if (probs.size() < num)
+		probs.resize(num);
+	probs[num] = prob;
 }

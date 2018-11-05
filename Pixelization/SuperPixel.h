@@ -11,6 +11,7 @@ private:
 	int size;
 	cv::Scalar color;
 	int paletteColor;
+	std::vector<double> probs;
 
 public:
 	SuperPixel();
@@ -24,9 +25,11 @@ public:
 	int getSpXCoor();
 	int getSpYCoor();
 	int getSpNum();
+	std::vector<double> getPaletteProbs();
 	void setColor(cv::Scalar color);
 	void setColor(cv::Vec3b color);
 	void setPaletteColor(int color);
 	void setCentroid(double x, double y);
+	void setPaletteProb(int num, double prob);
 };
 
