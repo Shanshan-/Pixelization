@@ -85,35 +85,7 @@ cv::Scalar getMeanColor(cv::Mat image) {
 }
 
 double getStartTemp(cv::Mat image) {
-	////reshape the image into a single line
-	//cv::Mat data = image.reshape(1, image.rows * image.cols * 3);
-	//cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_COL, 3);
-	//std::cout << pca.eigenvectors << std::endl;
-	//std::cout << pca.eigenvalues << std::endl;
-
-	//split the image into three component channels
-	//cv::Mat lab = cv::Mat(1, image.rows * image.cols * 3, CV_32F);
-	cv::Mat lab[3];
-	cv::split(image, lab);
-	//int maxvariance = 
-
-	//perform PCA on each
-	for (int channel = 0; channel < 3; channel++) {
-		cv::PCA pca = cv::PCA(lab[channel], cv::Mat(), CV_PCA_DATA_AS_ROW, 2);
-		std::cout << pca.eigenvectors << std::endl;
-		std::cout << pca.eigenvalues << std::endl;
-
-		//reduce to 1 dimension
-		//std::cout << pca.eigenvectors << std::endl;
-		//std::cout << pca.eigenvalues << std::endl;
-		cv::Mat final = pca.eigenvectors.row(0)*lab[channel].t();
-
-		//calculate the mean and variance
-
-	}
-
-
-	//using namespace cv;
-	////PCA pca = cv::PCA(image, cv::Mat(), CV_PCA_DATA_AC_ROW);
-	return 600.0; //TODO: replace this with actual valid value
+	using namespace cv;
+	//PCA pca = cv::PCA(image, cv::Mat(), CV_PCA_DATA_AC_ROW);
+	return 600;
 }

@@ -1,6 +1,9 @@
 - implementing palette refinement
 - expanding palette
+- when performing principal component anylysis, perform on each channel seperately, to get the individual values 
+	needed for calculations
 
 TODOs
 - add an image abstract class (rename currt Image class too)
 - perturbing of color in palette is along principal component axis in LAB space
+- maybe move mean color calcuation into the Palette class

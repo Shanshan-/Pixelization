@@ -2,7 +2,7 @@
 
 Palette::Palette() {}
 
-Palette::Palette(Image* img1, SPImage* img2, int size, double cT, double thresh, cv::Scalar startColor) {
+Palette::Palette(Image* img1, SPImage* img2, int size, double cT, cv::Scalar startColor) {
 	temp = cT;
 	origImage = img1;
 	pixelImage = img2;
@@ -10,12 +10,12 @@ Palette::Palette(Image* img1, SPImage* img2, int size, double cT, double thresh,
 	maxSize = size;
 	colors.reserve(size);
 	margProbs.reserve(size);
+	margProbs.push_back({ 0.0 });
 	addColor(startColor);
-	convergeThresh = thresh;
 	paletteChange = 0.0;
 }
 
-Palette::Palette(Image* img1, SPImage* img2, int size, double cT, double thresh, cv::Vec3b startColor) {
+Palette::Palette(Image* img1, SPImage* img2, int size, double cT, cv::Vec3b startColor) {
 	temp = cT;
 	origImage = img1;
 	pixelImage = img2;
@@ -23,8 +23,8 @@ Palette::Palette(Image* img1, SPImage* img2, int size, double cT, double thresh,
 	maxSize = size;
 	colors.reserve(size);
 	margProbs.reserve(size);
+	margProbs.push_back({ 0.0 });
 	addColor((cv::Scalar)startColor);
-	convergeThresh = thresh;
 	paletteChange = 0.0;
 }
 
@@ -80,8 +80,12 @@ void Palette::refinePalette() {
 	}
 }
 
-void Palette::expandPalette() {
+bool Palette::expandPalette() {
 	std::cout << "Palette.expandPalette() has not yet been implemented.";
+	temp *= EXPAND_THRESH_FACTOR;
+	if (curSize == maxSize)
+		return false;
+	return true;
 }
 
 
@@ -120,4 +124,8 @@ std::vector<std::vector<cv::Scalar>> Palette::getColors() {
 
 int Palette::getCurSize() {
 	return curSize;
+}
+
+double Palette::getCurTemp() {
+	return temp;
 }

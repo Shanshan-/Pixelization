@@ -112,7 +112,7 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	//bilaterally filter fimage //Note: difference better noticible at larger scales/images
 	int fd = pixelImage->getSpSize();
 	cv::Mat fimage2;
-	cv::bilateralFilter(fimage, fimage2, fd, 10*fd, 10*fd);
+	cv::bilateralFilter(fimage, fimage2, fd, FD_MULT*fd, FD_MULT*fd);
 	//TODO: program will break here if fd and 10*fd not factors of fimage.shape
 
 	//assign superpixel values (color and center)
@@ -127,7 +127,7 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	cv::String windowName = "Image Results"; //Name of the window
 	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
 	cv::moveWindow(windowName, 30, 40);
-	cv::resize(fimage, outImg, cv::Size(), 10, 10, CV_INTER_NN);
+	cv::resize(fimage, outImg, cv::Size(), SCALE, SCALE, CV_INTER_NN);
 	cv::cvtColor(outImg, outImg, cv::COLOR_Lab2BGR);
 	cv::imshow(windowName, outImg); // Show our image inside the created window.
 	cv::waitKey(0); // Wait for any keystroke in the window
@@ -135,7 +135,7 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 
 	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
 	cv::moveWindow(windowName, 30, 40);
-	cv::resize(fimage2, outImg, cv::Size(), 10, 10, CV_INTER_NN);
+	cv::resize(fimage2, outImg, cv::Size(), SCALE, SCALE, CV_INTER_NN);
 	cv::cvtColor(outImg, outImg, cv::COLOR_Lab2BGR);
 	cv::imshow(windowName, outImg); // Show our image inside the created window.
 	cv::waitKey(0); // Wait for any keystroke in the window

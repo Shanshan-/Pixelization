@@ -6,6 +6,8 @@
 #define REP_COLOR 0
 #define CL1_COLOR 1
 #define CL2_COLOR 2
+#define EXPAND_THRESH_FACTOR 0.7
+#define THRESHOLD 30 //TODO: experiment with tweaking this number
 
 class Palette {
 private:
@@ -14,18 +16,17 @@ private:
 	Image* origImage;
 	SPImage* pixelImage;
 	double paletteChange;
-	double convergeThresh;
 	double temp;
 	int curSize;
 	int maxSize;
 
 public:
 	Palette();
-	Palette(Image* img1, SPImage* img2, int size, double cT, double thresh, cv::Scalar startColor);
-	Palette(Image* img1, SPImage* img2, int size, double cT, double thresh, cv::Vec3b startColor);
+	Palette(Image* img1, SPImage* img2, int size, double cT, cv::Scalar startColor);
+	Palette(Image* img1, SPImage* img2, int size, double cT, cv::Vec3b startColor);
 	void associatePalette();
 	void refinePalette();
-	void expandPalette();
+	bool expandPalette();
 	double colorDist(cv::Scalar icolor, int pcolor);
 	double weight(int num);
 	void addColor(cv::Scalar newColor);
@@ -33,5 +34,6 @@ public:
 	double getChange();
 	std::vector<std::vector<cv::Scalar>> getColors();
 	int getCurSize();
+	double getCurTemp();
 };
 

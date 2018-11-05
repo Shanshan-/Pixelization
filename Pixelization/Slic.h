@@ -11,6 +11,9 @@
 #define COUNT 5
 #define RATIO { 4, 6 } //used for moving centroid
 
+#define FD_MULT 15
+#define SCALE 3
+
 class Slic {
 private:
 	Image* origImage;
