@@ -26,6 +26,7 @@ public:
 	int getSpYCoor();
 	int getSpNum();
 	void setColor(cv::Scalar color);
+	void setColor(cv::Vec3b color);
 	void setPaletteColor(int color);
 	void setCentroid(double x, double y);
 };

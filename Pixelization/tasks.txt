@@ -1,0 +1,5 @@
+- implementing palette refinement
+- expanding palette
+
+TODOs
+- add an image abstract class (rename currt Image class too)

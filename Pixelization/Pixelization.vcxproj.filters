@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="tutorials.txt" />
+    <Text Include="tasks.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SuperPixel.h">

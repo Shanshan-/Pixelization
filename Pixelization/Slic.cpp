@@ -38,18 +38,19 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	tmp.assign(pixelImage->numPixels(), std::vector<double>(6, 0));
 	for (int pos = 0; pos < origImage->numPixels(); pos++) {
 		auto pix = origImage->getPixel(pos / origImage->cols(), pos % origImage->cols());
-		tmp[pix.getSpNum()][0] += pix.getColor()[0];		//l value agg
-		tmp[pix.getSpNum()][1] += pix.getColor()[1];		//a value agg
-		tmp[pix.getSpNum()][2] += pix.getColor()[2];		//b value agg
-		tmp[pix.getSpNum()][3] += pix.getXCoor();		//x coor agg
-		tmp[pix.getSpNum()][4] += pix.getYCoor();		//y coor agg
-		tmp[pix.getSpNum()][5] += 1;					//counter
+		tmp[pix.getSpNum()][LVAL] += pix.getColor()[0];		//l value agg
+		tmp[pix.getSpNum()][AVAL] += pix.getColor()[1];		//a value agg
+		tmp[pix.getSpNum()][BVAL] += pix.getColor()[2];		//b value agg
+		tmp[pix.getSpNum()][XCOOR] += pix.getXCoor();		//x coor agg
+		tmp[pix.getSpNum()][YCOOR] += pix.getYCoor();		//y coor agg
+		tmp[pix.getSpNum()][COUNT] += 1;					//counter
 	}
 
 	//setup extra image to be used for color smoothing
 	cv::Mat fimage = cv::Mat(pixelImage->rows(), pixelImage->cols(), CV_8UC3);
 
 	//adjust centroid locations and color values
+	double newPos[2];
 	for (int x = 0; x < pixelImage->numPixels(); x++) {
 		//get 4-neighbor positions
 		double nadj[2] = { 0.0, 0.0 };
@@ -95,13 +96,13 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 
 		//get average position and laplacian smooth towards grid structure
 		int ratio[] = RATIO; //used for section formula
-		double tmpPos[] = { tmp[x][3] / tmp[x][5], tmp[x][4] / tmp[x][5] };
+		double tmpPos[] = { tmp[x][XCOOR] / tmp[x][COUNT], tmp[x][YCOOR] / tmp[x][COUNT] };
 		double avgPos[] = { (nadj[0] + sadj[0] + wadj[0] + eadj[0]) / 4, (nadj[1] + sadj[1] + wadj[1] + eadj[1]) / 4 };
-		double newPos[] = { (ratio[0] * avgPos[0] + ratio[1] * tmpPos[0]) / (ratio[0] + ratio[1])
-			, (ratio[0] * avgPos[1] + ratio[1] * tmpPos[1]) / (ratio[0] + ratio[1]) };
+		newPos[0] = (ratio[0] * avgPos[0] + ratio[1] * tmpPos[0]) / (ratio[0] + ratio[1]);
+		newPos[1] = (ratio[0] * avgPos[1] + ratio[1] * tmpPos[1]) / (ratio[0] + ratio[1]);
 
 		//get average color and add to filter image
-		cv::Scalar avgColor = cv::Scalar(tmp[x][0] / tmp[x][5], tmp[x][1] / tmp[x][5], tmp[x][2] / tmp[x][5]);
+		cv::Scalar avgColor = cv::Scalar(tmp[x][LVAL] / tmp[x][COUNT], tmp[x][AVAL] / tmp[x][COUNT], tmp[x][BVAL] / tmp[x][COUNT]);
 		cv::Vec3b color = cv::Vec3b((uchar)avgColor[0], (uchar)avgColor[1], (uchar)avgColor[2]);
 		int tmpx = int(x / pixelImage->cols());
 		int tmpy = x % pixelImage->cols();
@@ -114,7 +115,12 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	cv::bilateralFilter(fimage, fimage2, fd, 10*fd, 10*fd);
 	//TODO: program will break here if fd and 10*fd not factors of fimage.shape
 
-	//assign superpixel values
+	//assign superpixel values (color and center)
+	for (int x = 0; x < pixelImage->numPixels(); x++) {
+		auto spixel = pixelImage->getPixel(x);
+		spixel.setCentroid(newPos[0], newPos[1]);
+		spixel.setColor(fimage2.at<cv::Vec3b>(x / pixelImage->cols(), x % pixelImage->cols()));
+	}
 
 	//preview image
 	cv::Mat outImg;
@@ -134,6 +140,8 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	cv::imshow(windowName, outImg); // Show our image inside the created window.
 	cv::waitKey(0); // Wait for any keystroke in the window
 	cv::destroyWindow(windowName); //destroy the created window
+
+	workingImage = fimage2;
 }
 
 double Slic::distance(int pixelx, int pixely, int spVal) {

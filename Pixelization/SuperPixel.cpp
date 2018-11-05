@@ -78,6 +78,11 @@ void SuperPixel::setColor(cv::Scalar color) {
 	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
 }
 
+void SuperPixel::setColor(cv::Vec3b color) {
+	color1 = cv::Scalar(color[0], color[1], color[2] + 1);
+	color2 = cv::Scalar(color[0], color[1], color[2] - 1);
+}
+
 void SuperPixel::setPaletteColor(int color) {
 	paletteColor = color;
 }
