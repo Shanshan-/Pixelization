@@ -85,7 +85,7 @@ cv::Scalar getMeanColor(cv::Mat image) {
 }
 
 double getStartTemp(cv::Mat image) {
-	////reshape the image into a single line
+	/*////reshape the image into a single line
 	//cv::Mat data = image.reshape(1, image.rows * image.cols * 3);
 	//cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_COL, 3);
 	//std::cout << pca.eigenvectors << std::endl;
@@ -99,6 +99,7 @@ double getStartTemp(cv::Mat image) {
 
 	//perform PCA on each
 	for (int channel = 0; channel < 3; channel++) {
+		cv::normalize(lab[channel], lab[channel], 0, 255, cv::NORM_MINMAX);
 		cv::PCA pca = cv::PCA(lab[channel], cv::Mat(), CV_PCA_DATA_AS_ROW, 2);
 		std::cout << pca.eigenvectors << std::endl;
 		std::cout << pca.eigenvalues << std::endl;
@@ -110,10 +111,27 @@ double getStartTemp(cv::Mat image) {
 
 		//calculate the mean and variance
 
-	}
+	}*/
 
+	//Assemble a data matrix
+	cv::Mat data = image.reshape(1, 3); //switching to (3,1) changes image to 1d color image
+
+	//Using PCA (mean calculated by PCA function)
+	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_ROW, 3);
+
+	//check the data
+	std::cout << pca.eigenvectors << std::endl;
+	std::cout << pca.eigenvalues << std::endl;
+	std::cout << pca.eigenvalues.type() << std::endl;
+	std::cout << pca.eigenvalues.at<float>(0) << std::endl;
+
+	//return the initial temperature 
+	return 2*pca.eigenvalues.at<float>(0);
+
+	//to find cv::Mat.type()
+	//https://stackoverflow.com/questions/10167534/how-to-find-out-what-type-of-a-mat-object-is-with-mattype-in-opencv
 
 	//using namespace cv;
 	////PCA pca = cv::PCA(image, cv::Mat(), CV_PCA_DATA_AC_ROW);
-	return 600.0; //TODO: replace this with actual valid value
+	//return 600.0; //TODO: replace this with actual valid value
 }
