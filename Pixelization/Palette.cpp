@@ -88,6 +88,16 @@ bool Palette::expandPalette() {
 	return true;
 }
 
+void Palette::permutePCA(int pcolor) {
+	//get all of the pixels assigned to this color, and store in cv::Mat structure
+
+	//perform pca, and get principal component axis
+
+	//permute palette[pcolor] along axis
+
+	//store results in the palette
+}
+
 
 double Palette::colorDist(cv::Scalar icolor, int pcolor) {
 	double dl = icolor[0] - colors[pcolor][REP_COLOR][0];

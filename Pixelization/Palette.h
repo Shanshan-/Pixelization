@@ -35,5 +35,6 @@ public:
 	std::vector<std::vector<cv::Scalar>> getColors();
 	int getCurSize();
 	double getCurTemp();
+	void permutePCA(int pcolor);
 };
 

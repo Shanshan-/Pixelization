@@ -120,8 +120,12 @@ double getStartTemp(cv::Mat image) {
 	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_ROW, 3);
 
 	//check the data
-	std::cout << pca.eigenvectors << std::endl;
-	std::cout << pca.eigenvalues << std::endl;
+	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0) << std::endl;
+	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 0) << std::endl;
+	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 1) << std::endl;
+	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 2) << std::endl;
+	std::cout << "Values:\n" << pca.eigenvalues << std::endl;
+	std::cout << "Mean:\n" << pca.mean << std::endl;
 	std::cout << pca.eigenvalues.type() << std::endl;
 	std::cout << pca.eigenvalues.at<float>(0) << std::endl;
 
