@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 	double startTemp = getStartTemp(image);
 
 	//generate image classes to work with
-	Image pimage = Image(image);
+	PicImage pimage = PicImage(image);
 	pimage.assignSP(spSize);
 	pimage.printAssignments();
 	SPImage spImage = SPImage(image.rows / spSize, image.cols / spSize, spSize, meanColor);

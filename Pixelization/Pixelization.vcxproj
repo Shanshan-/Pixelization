@@ -89,7 +89,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>Dependencies\opencv-2.4.13\include;Dependencies\freeglut-3.0.0\include;Dependencies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>Dependencies\opencv-2.4.13\x86\vc14\lib;Dependencies\freeglut-3.0.0\lib;Dependencies\glew-2.1.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;glew32.lib;opencv_calib3d2413d.lib;opencv_contrib2413d.lib;opencv_core2413d.lib;opencv_features2d2413d.lib;opencv_flann2413d.lib;opencv_gpu2413d.lib;opencv_highgui2413d.lib;opencv_imgproc2413d.lib;opencv_legacy2413d.lib;opencv_ml2413d.lib;opencv_nonfree2413d.lib;opencv_objdetect2413d.lib;opencv_ocl2413d.lib;opencv_photo2413d.lib;opencv_stitching2413d.lib;opencv_superres2413d.lib;opencv_ts2413d.lib;opencv_video2413d.lib;opencv_videostab2413d.lib</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -123,7 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="PicImage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="Pixel.cpp" />
@@ -138,7 +143,7 @@
   <ItemGroup>
     <ClInclude Include="base.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="Image.h" />
+    <ClInclude Include="PicImage.h" />
     <ClInclude Include="Palette.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="resource.h" />

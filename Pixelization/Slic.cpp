@@ -2,7 +2,7 @@
 
 Slic::Slic() {}
 
-Slic::Slic(Image* img1, SPImage* img2) {
+Slic::Slic(PicImage* img1, SPImage* img2) {
 	origImage = img1;
 	pixelImage = img2;
 }
