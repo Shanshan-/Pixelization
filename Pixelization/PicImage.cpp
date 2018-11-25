@@ -4,38 +4,38 @@
 PicImage::PicImage() {
 }
 
-PicImage::PicImage(cv::Mat image) {
-	dimensions[0] = image.rows;
-	dimensions[1] = image.cols;
-	pixels.resize(image.cols * image.rows);
-	for (int x = 0; x < image.rows; x++) {
-		for (int y = 0; y < image.cols; y++) {
-			cv::Scalar color = cv::Scalar(image.at<cv::Vec3b>(x, y)[0],
-				image.at<cv::Vec3b>(x, y)[1], image.at<cv::Vec3b>(x, y)[2]);
-			pixels[x*dimensions[1] + y] = new Pixel(x, y, color); //TODO: call delete later
-		}
-	}
+PicImage::PicImage(cv::Mat* origImage) {
+	dimensions[0] = origImage->rows;
+	dimensions[1] = origImage->cols;
+	image = origImage;
+	equalImport = TRUE;
+}
+
+PicImage::PicImage(cv::Mat* origImage, std::map<int, short>* importanceMap) {
+	dimensions[0] = origImage->rows;
+	dimensions[1] = origImage->cols;
+	image = origImage;
+	equalImport = FALSE;
+	importance = importanceMap;
 }
 
 /* METHODS */
-std::vector<Pixel*> PicImage::getSpPixels(int num) {
-	std::vector<Pixel*> ans = std::vector<Pixel*>(10, NULL);
+std::vector<int> PicImage::getSpPixels(int num) {
+	std::vector<int> ans = std::vector<int>();
 	int spSize = 0;
-	for (int x = 0; x < pixels.size(); x++) {
-		Pixel cur = *(pixels[x]);
-		if (cur.getSpNum() == num) {
-			ans[spSize] = pixels[x];
-			spSize++;
+	for (auto it = spAssignments.begin(); it != spAssignments.end(); it++) {
+		if (it->second == num) { //second = value
+			ans.push_back(it->first); //first = key
 		}
 	}
 	return ans;
 }
 
 void PicImage::assignSP(int spSize) {
-	for (int x = 0; x < pixels.size(); x++) {
+	for (int x = 0; x < dimensions[0] * dimensions[1]; x++) {
 		int tmp1 = int((x / dimensions[1]) / spSize) * (dimensions[1] / spSize);
 		int tmp2 = int((x % dimensions[1]) / spSize);
-		(*pixels[x]).setSpNum(tmp1 + tmp2);
+		spAssignments[x] = tmp1 + tmp2;
 	}
 }
 
@@ -46,9 +46,6 @@ cv::Scalar PicImage::getAvgColor(int spNum) {
 }
 
 /* GETTERS AND SETTERS */
-Pixel PicImage::getPixel(int x, int y) {
-	return *(pixels[x*dimensions[1] + y]);
-}
 
 int PicImage::numPixels() {
 	return dimensions[0] * dimensions[1];
@@ -64,10 +61,13 @@ int PicImage::cols() {
 
 /* PRINT FUNCTIONS */
 void PicImage::printAssignments() {
-	for (int x = 0; x < dimensions[0]; x++) {
-		for (int y = 0; y < dimensions[1]; y++) {
-			std::cout << (*pixels[x*dimensions[1] + y]).getSpNum() << "\t";
+	int count = 0;
+	for (auto it = spAssignments.begin(); it != spAssignments.end(); it++) {
+		std::cout << it->second << "\t";
+		count++;
+		if (count == dimensions[1]) {
+			count = 0;
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
 	}
 }
