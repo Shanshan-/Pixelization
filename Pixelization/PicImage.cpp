@@ -1,10 +1,10 @@
-#include "Image.h"
+#include "PicImage.h"
 
 /* CONSTRUCTORS */
-Image::Image() {
+PicImage::PicImage() {
 }
 
-Image::Image(cv::Mat image) {
+PicImage::PicImage(cv::Mat image) {
 	dimensions[0] = image.rows;
 	dimensions[1] = image.cols;
 	pixels.resize(image.cols * image.rows);
@@ -18,7 +18,7 @@ Image::Image(cv::Mat image) {
 }
 
 /* METHODS */
-std::vector<Pixel*> Image::getSpPixels(int num) {
+std::vector<Pixel*> PicImage::getSpPixels(int num) {
 	std::vector<Pixel*> ans = std::vector<Pixel*>(10, NULL);
 	int spSize = 0;
 	for (int x = 0; x < pixels.size(); x++) {
@@ -31,7 +31,7 @@ std::vector<Pixel*> Image::getSpPixels(int num) {
 	return ans;
 }
 
-void Image::assignSP(int spSize) {
+void PicImage::assignSP(int spSize) {
 	for (int x = 0; x < pixels.size(); x++) {
 		int tmp1 = int((x / dimensions[1]) / spSize) * (dimensions[1] / spSize);
 		int tmp2 = int((x % dimensions[1]) / spSize);
@@ -39,31 +39,31 @@ void Image::assignSP(int spSize) {
 	}
 }
 
-cv::Scalar Image::getAvgColor(int spNum) {
+cv::Scalar PicImage::getAvgColor(int spNum) {
 	//TODO: implement this
-	std::cout << "Image.getAvgColor() has not been implemented yet.";
+	std::cout << "PicImage.getAvgColor() has not been implemented yet.";
 	return NULL;
 }
 
 /* GETTERS AND SETTERS */
-Pixel Image::getPixel(int x, int y) {
+Pixel PicImage::getPixel(int x, int y) {
 	return *(pixels[x*dimensions[1] + y]);
 }
 
-int Image::numPixels() {
+int PicImage::numPixels() {
 	return dimensions[0] * dimensions[1];
 }
 
-int Image::rows() {
+int PicImage::rows() {
 	return dimensions[0];
 }
 
-int Image::cols() {
+int PicImage::cols() {
 	return dimensions[1];
 }
 
 /* PRINT FUNCTIONS */
-void Image::printAssignments() {
+void PicImage::printAssignments() {
 	for (int x = 0; x < dimensions[0]; x++) {
 		for (int y = 0; y < dimensions[1]; y++) {
 			std::cout << (*pixels[x*dimensions[1] + y]).getSpNum() << "\t";

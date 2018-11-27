@@ -2,7 +2,7 @@
 
 Palette::Palette() {}
 
-Palette::Palette(Image* img1, SPImage* img2, int size, double cT, cv::Scalar startColor) {
+Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Scalar startColor) {
 	temp = cT;
 	origImage = img1;
 	pixelImage = img2;
@@ -15,7 +15,7 @@ Palette::Palette(Image* img1, SPImage* img2, int size, double cT, cv::Scalar sta
 	paletteChange = 0.0;
 }
 
-Palette::Palette(Image* img1, SPImage* img2, int size, double cT, cv::Vec3b startColor) {
+Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Vec3b startColor) {
 	temp = cT;
 	origImage = img1;
 	pixelImage = img2;

@@ -1,6 +1,6 @@
 #pragma once
 #include "base.h"
-#include "Image.h"
+#include "PicImage.h"
 #include "SPImage.h"
 
 #define REP_COLOR 0
@@ -13,7 +13,7 @@ class Palette {
 private:
 	std::vector<std::vector<cv::Scalar>> colors;
 	std::vector<double> margProbs;
-	Image* origImage;
+	PicImage* origImage;
 	SPImage* pixelImage;
 	double paletteChange;
 	double temp;
@@ -22,8 +22,8 @@ private:
 
 public:
 	Palette();
-	Palette(Image* img1, SPImage* img2, int size, double cT, cv::Scalar startColor);
-	Palette(Image* img1, SPImage* img2, int size, double cT, cv::Vec3b startColor);
+	Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Scalar startColor);
+	Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Vec3b startColor);
 	void associatePalette();
 	void refinePalette();
 	bool expandPalette();

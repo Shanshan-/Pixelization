@@ -3,7 +3,7 @@
 #include "SuperPixel.h"
 #include "Slic.h"
 #include "SPImage.h"
-#include "Image.h"
+#include "PicImage.h"
 #include "Palette.h"
 #include "Pixel.h"
 
