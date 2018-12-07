@@ -8,6 +8,7 @@ int main(int argc, char **argv) {
 
 	//load image
 	cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
+	//std::cout << image.type();
 	//TODO: program breaks if length and width are not exact multiples of spSize
 	if (image.empty()) {
 		char c;
@@ -46,6 +47,7 @@ int main(int argc, char **argv) {
 		palette.refinePalette();
 
 		if (palette.getChange() < TEMP_CHANGE_THRESH) {
+			std::cout << "Convergence has occured.  Expanding palette..." << std::endl;
 			palette.expandPalette();
 			curTemp = palette.getCurTemp();
 		}
@@ -123,13 +125,14 @@ double getStartTemp(cv::Mat image) {
 	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_COL);
 
 	//check the data
-	std::cout << "Vectors:\n" << pca.eigenvectors << std::endl;
+	//std::cout << "Vectors:\n" << pca.eigenvectors << std::endl;
+	//std::cout << pca.eigenvectors.type() << std::endl;
 	/*std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 0) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 1) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 2) << std::endl;*/
-	std::cout << "Values:\n" << pca.eigenvalues << std::endl;
-	std::cout << "Mean:\n" << pca.mean << std::endl;
+	//std::cout << "Values:\n" << pca.eigenvalues << std::endl;
+	//std::cout << "Mean:\n" << pca.mean << std::endl;
 	/*std::cout << pca.eigenvalues.type() << std::endl;
 	std::cout << pca.eigenvalues.at<float>(0) << std::endl;*/
 
