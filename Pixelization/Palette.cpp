@@ -107,7 +107,7 @@ double Palette::colorDist(cv::Scalar icolor, int pcolor) {
 }
 
 double Palette::weight(int num) {
-	std::cout << "This capability has not yet been implemented; defaulting to uniform.";
+	//std::cout << "Palette.weight() has not yet been implemented; defaulting to uniform.\n";
 	return 1.0;
 }
 

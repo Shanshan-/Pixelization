@@ -32,7 +32,7 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 			}
 		}
 	}
-	origImage->printAssignments();
+	//origImage->printAssignments();
 
 	//generate new average positions and colors of each centroid
 	tmp.assign(pixelImage->numPixels(), std::vector<double>(6, 0));

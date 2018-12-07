@@ -27,18 +27,21 @@ int main(int argc, char **argv) {
 	//generate image classes to work with
 	PicImage pimage = PicImage(image);
 	pimage.assignSP(spSize);
-	pimage.printAssignments();
+	//pimage.printAssignments();
+	std::cout << "Assignments completed\n";
 	SPImage spImage = SPImage(image.rows / spSize, image.cols / spSize, spSize, meanColor);
-	spImage.printCentroids();
+	//spImage.printCentroids();
+	std::cout << "SPImage initialized\n";
 	Slic slic = Slic(&pimage, &spImage);
 	double curTemp = startTemp;
+	Palette palette = Palette(&pimage, &spImage, paletteSize, startTemp, meanColor);
 	
 	while (curTemp > FINAL_TEMP) {
+		std::cout << "Starting iteration at temp " << curTemp << " ; Last change was " << palette.getChange() << std::endl;
 		//refine the superpixels
 		slic.refineSP();
 
 		//refine the palette
-		Palette palette = Palette(&pimage, &spImage, paletteSize, startTemp, meanColor);
 		palette.associatePalette();
 		palette.refinePalette();
 
@@ -120,14 +123,14 @@ double getStartTemp(cv::Mat image) {
 	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_ROW, 3);
 
 	//check the data
-	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0) << std::endl;
+	/*std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 0) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 1) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 2) << std::endl;
 	std::cout << "Values:\n" << pca.eigenvalues << std::endl;
 	std::cout << "Mean:\n" << pca.mean << std::endl;
 	std::cout << pca.eigenvalues.type() << std::endl;
-	std::cout << pca.eigenvalues.at<float>(0) << std::endl;
+	std::cout << pca.eigenvalues.at<float>(0) << std::endl;*/
 
 	//return the initial temperature 
 	return 2*pca.eigenvalues.at<float>(0);
