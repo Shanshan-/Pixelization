@@ -18,7 +18,7 @@ class Slic {
 private:
 	PicImage* origImage;
 	SPImage* pixelImage;
-	cv::Mat workingImage;
+	//cv::Mat workingImage;
 
 public:
 	Slic();

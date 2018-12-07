@@ -4,10 +4,10 @@ int main(int argc, char **argv) {
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	int paletteSize = 8;
-	int spSize = 3; //squirrel size = 9, scale = 10, mult = 2
+	int spSize = 2; //squirrel size = 9, scale = 10, mult = 2
 
 	//load image
-	cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
+	cv::Mat image = cv::imread(IMG_PATH "flower.png");
 	//TODO: program breaks if length and width are not exact multiples of spSize
 	if (image.empty()) {
 		char c;
@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
 	double startTemp = getStartTemp(image);
 
 	//generate image classes to work with
-	PicImage pimage = PicImage(image);
-	pimage.assignSP(spSize);
+	PicImage pimage = PicImage(&image);
+	pimage.initSP(spSize);
 	pimage.printAssignments();
 	SPImage spImage = SPImage(image.rows / spSize, image.cols / spSize, spSize, meanColor);
 	spImage.printCentroids();
@@ -120,14 +120,14 @@ double getStartTemp(cv::Mat image) {
 	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_ROW, 3);
 
 	//check the data
-	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0) << std::endl;
-	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 0) << std::endl;
-	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 1) << std::endl;
-	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 2) << std::endl;
-	std::cout << "Values:\n" << pca.eigenvalues << std::endl;
-	std::cout << "Mean:\n" << pca.mean << std::endl;
-	std::cout << pca.eigenvalues.type() << std::endl;
-	std::cout << pca.eigenvalues.at<float>(0) << std::endl;
+	//std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0) << std::endl;
+	//std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 0) << std::endl;
+	//std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 1) << std::endl;
+	//std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 2) << std::endl;
+	//std::cout << "Values:\n" << pca.eigenvalues << std::endl;
+	//std::cout << "Mean:\n" << pca.mean << std::endl;
+	//std::cout << pca.eigenvalues.type() << std::endl;
+	//std::cout << pca.eigenvalues.at<float>(0) << std::endl;
 
 	//return the initial temperature 
 	return 2*pca.eigenvalues.at<float>(0);

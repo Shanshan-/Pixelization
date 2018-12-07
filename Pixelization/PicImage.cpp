@@ -31,12 +31,22 @@ std::vector<int> PicImage::getSpPixels(int num) {
 	return ans;
 }
 
-void PicImage::assignSP(int spSize) {
+void PicImage::initSP(int spSize) {
+	//TODO: change so that robust to not being exact
 	for (int x = 0; x < dimensions[0] * dimensions[1]; x++) {
 		int tmp1 = int((x / dimensions[1]) / spSize) * (dimensions[1] / spSize);
 		int tmp2 = int((x % dimensions[1]) / spSize);
 		spAssignments[x] = tmp1 + tmp2;
+		//std::cout << x << std::endl;
 	}
+}
+
+void PicImage::setSpNum(int pixel, int spNum) {
+	spAssignments[pixel] = spNum;
+}
+
+void PicImage::setSpNum(int x, int y, int spNum) {
+	spAssignments[x*dimensions[1] + y] = spNum;
 }
 
 cv::Scalar PicImage::getAvgColor(int spNum) {
@@ -57,6 +67,14 @@ int PicImage::rows() {
 
 int PicImage::cols() {
 	return dimensions[1];
+}
+
+std::map<int, int>* PicImage::getSpAssigns() {
+	return &spAssignments;
+}
+
+cv::Mat* PicImage::getImage() {
+	return image;
 }
 
 /* PRINT FUNCTIONS */
