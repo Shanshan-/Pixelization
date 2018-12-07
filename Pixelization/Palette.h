@@ -6,12 +6,14 @@
 #define REP_COLOR 0
 #define CL1_COLOR 1
 #define CL2_COLOR 2
+#define VARIANCE 3
 #define EXPAND_THRESH_FACTOR 0.7
 #define THRESHOLD 30 //TODO: experiment with tweaking this number
 
 class Palette {
 private:
 	std::vector<std::vector<cv::Scalar>> colors;
+	std::vector<double> assignedSP;
 	std::vector<double> margProbs;
 	PicImage* origImage;
 	SPImage* pixelImage;
@@ -31,6 +33,7 @@ public:
 	double weight(int num);
 	void addColor(cv::Scalar newColor);
 	void editColor(int num, cv::Scalar newColor);
+	void pcaAll();
 	double getChange();
 	std::vector<std::vector<cv::Scalar>> getColors();
 	int getCurSize();

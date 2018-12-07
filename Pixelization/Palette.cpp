@@ -81,7 +81,22 @@ void Palette::refinePalette() {
 }
 
 bool Palette::expandPalette() {
-	std::cout << "Palette.expandPalette() has not yet been implemented.";
+	//std::cout << "Palette.expandPalette() has not yet been implemented.";
+	pcaAll();
+
+	//find the palette color with the largest variance
+	int maxColor = 0;
+	for (int x = 1; x < curSize; x++) {
+		if (colors[x][VARIANCE][0] > colors[maxColor][VARIANCE][0]) {
+			maxColor = x;
+		}
+	}
+
+	//add the two component colors to the palette, and remove the old
+	addColor(colors[maxColor][CL2_COLOR]);
+	editColor(maxColor, colors[maxColor][CL1_COLOR]);
+
+	//lower the annealing temperature
 	temp *= EXPAND_THRESH_FACTOR;
 	if (curSize == maxSize)
 		return false;
@@ -89,15 +104,38 @@ bool Palette::expandPalette() {
 }
 
 void Palette::permutePCA(int pcolor) {
-	//get all of the pixels assigned to this color, and store in cv::Mat structure
+	//get all of the superpixels assigned to this color
+	std::vector<int> assigned;
+	for (int num = 0; num < pixelImage->numPixels(); num++) {
+		if (pixelImage->getPixel(num).getPaletteColor() == pcolor) {
+			assigned.push_back(num);
+		}
+	}
 
-	//perform pca, and get principal component axis
+	//get pixel data of all pixels in the assigned super pixels
+	cv::Mat data;
+	for (int num = 0; num < origImage->numPixels(); num++) {
+		auto tmp = std::find(assigned.begin(), assigned.end(), origImage->getPixel(num).getSpNum());
+		if (assigned.end() != tmp) {
+			data.push_back(origImage->getPixel(num).getColor());
+		}
+	}
+
+	//perform pca
+	data = data.reshape(1, 3);
+	data.convertTo(data, CV_8U);
+	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_COL);
 
 	//permute palette[pcolor] along axis
-
-	//store results in the palette
+	auto color1 = colors[pcolor][REP_COLOR];
+	colors[pcolor][CL1_COLOR][0] = color1[0] + pca.eigenvectors.at<float>(0, 0);
+	colors[pcolor][CL1_COLOR][1] = color1[1] + pca.eigenvectors.at<float>(0, 1);
+	colors[pcolor][CL1_COLOR][2] = color1[2] + pca.eigenvectors.at<float>(0, 2);
+	colors[pcolor][CL2_COLOR][0] = color1[0] - pca.eigenvectors.at<float>(0, 0);
+	colors[pcolor][CL2_COLOR][1] = color1[1] - pca.eigenvectors.at<float>(0, 1);
+	colors[pcolor][CL2_COLOR][2] = color1[2] - pca.eigenvectors.at<float>(0, 2);
+	colors[pcolor][VARIANCE] = pca.eigenvalues.at<float>(0);
 }
-
 
 double Palette::colorDist(cv::Scalar icolor, int pcolor) {
 	double dl = icolor[0] - colors[pcolor][REP_COLOR][0];
@@ -112,16 +150,22 @@ double Palette::weight(int num) {
 }
 
 void Palette::addColor(cv::Scalar newColor) {
-	cv::Scalar color1 = cv::Scalar(newColor[0], newColor[1], newColor[2] + 1);
 	cv::Scalar startColor1 = cv::Scalar(newColor[0], newColor[1], newColor[2]);
-	cv::Scalar color2 = cv::Scalar(newColor[0], newColor[1], newColor[2] - 1);
-	colors.push_back({ startColor1, color1, color2 });
+	colors.push_back({ startColor1, startColor1, startColor1, 0 });
+	//permutePCA(colors.size() - 1);
 }
 
 void Palette::editColor(int num, cv::Scalar newColor) {
 	colors[num][0] = cv::Scalar(newColor[0], newColor[1], newColor[2]);
-	colors[num][1] = cv::Scalar(newColor[0], newColor[1], newColor[2] + 1);
-	colors[num][2] = cv::Scalar(newColor[0], newColor[1], newColor[2] - 1);
+	/*if (expand) { //setting this value to FALSE saves computation time
+		permutePCA(num);
+	}*/
+}
+
+void Palette::pcaAll() {
+	for (int x = 0; x < curSize; x++) {
+		permutePCA(x);
+	}
 }
 
 double Palette::getChange() {
