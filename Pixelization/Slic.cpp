@@ -130,15 +130,16 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	cv::resize(fimage, outImg, cv::Size(), SCALE, SCALE, CV_INTER_NN);
 	cv::cvtColor(outImg, outImg, cv::COLOR_Lab2BGR);
 	cv::imshow(windowName, outImg); // Show our image inside the created window.
-	cv::waitKey(0); // Wait for any keystroke in the window
+	cv::waitKey(1500); // Wait for any keystroke in the window
 	cv::destroyWindow(windowName); //destroy the created window
 
+	/* Showing Biteral filter results */
 	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
 	cv::moveWindow(windowName, 30, 40);
 	cv::resize(fimage2, outImg, cv::Size(), SCALE, SCALE, CV_INTER_NN);
 	cv::cvtColor(outImg, outImg, cv::COLOR_Lab2BGR);
 	cv::imshow(windowName, outImg); // Show our image inside the created window.
-	cv::waitKey(0); // Wait for any keystroke in the window
+	cv::waitKey(1500); // Wait for any keystroke in the window
 	cv::destroyWindow(windowName); //destroy the created window
 
 	workingImage = fimage2;
