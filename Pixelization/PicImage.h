@@ -14,6 +14,7 @@ public:
 	cv::Scalar getAvgColor(int spNum);
 	void assignSP(int spSize);
 	Pixel getPixel(int x, int y);
+	Pixel getPixel(int num);
 	int numPixels();
 	int rows();
 	int cols();
