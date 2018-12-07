@@ -117,19 +117,20 @@ double getStartTemp(cv::Mat image) {
 	}*/
 
 	//Assemble a data matrix
-	cv::Mat data = image.reshape(1, 3); //switching to (3,1) changes image to 1d color image
+	cv::Mat data = image.reshape(1,3); //switching to (3,1) changes image to 1d color image
 
 	//Using PCA (mean calculated by PCA function)
-	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_ROW, 3);
+	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_COL);
 
 	//check the data
+	std::cout << "Vectors:\n" << pca.eigenvectors << std::endl;
 	/*std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 0) << std::endl;
 	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 1) << std::endl;
-	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 2) << std::endl;
+	std::cout << "Vectors:\n" << pca.eigenvectors.at<float>(0, 2) << std::endl;*/
 	std::cout << "Values:\n" << pca.eigenvalues << std::endl;
 	std::cout << "Mean:\n" << pca.mean << std::endl;
-	std::cout << pca.eigenvalues.type() << std::endl;
+	/*std::cout << pca.eigenvalues.type() << std::endl;
 	std::cout << pca.eigenvalues.at<float>(0) << std::endl;*/
 
 	//return the initial temperature 
