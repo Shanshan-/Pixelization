@@ -9,7 +9,7 @@
 
 #define IMG_PATH "../Images/"
 #define FINAL_TEMP 1
-#define TEMP_CHANGE_THRESH 0.0000000000000000000001
+#define TEMP_CHANGE_THRESH 0.005
 
 cv::Scalar getMeanColor(cv::Mat image);
 double getStartTemp(cv::Mat image);

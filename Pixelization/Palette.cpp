@@ -40,7 +40,7 @@ void Palette::associatePalette() {
 		for (int y = 0; y < curSize; y++) {
 			double dist = -abs(colorDist((*sPixel).getColor(), y));
 			condProb[y] = (*sPixel).getPaletteProbs()[y] * exp(dist / temp);
-			agg += (*sPixel).getPaletteProbs()[y] * exp(dist / temp);
+			agg += condProb[y];
 		}
 
 		// set superpixel to condProb values, and start aggregating for marginal probability P(c_k)
@@ -182,4 +182,27 @@ int Palette::getCurSize() {
 
 double Palette::getCurTemp() {
 	return temp;
+}
+
+void Palette::displayPixelImage(int scale) {
+	cv::Mat image(pixelImage->rows(), pixelImage->cols(), CV_8UC3, cv::Scalar(0,0,0));
+
+	for (int x = 0; x < pixelImage->numPixels(); x++) {
+		cv::Vec3b tmp = cv::Vec3b(
+			(uchar)colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][0],
+			(uchar)colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][1],
+			(uchar)colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][2]);
+		int col = x % pixelImage->cols();
+		int row = int((x + 0.0) / (pixelImage->cols()));
+lab color 		image.at<cv::Vec3b>(row, col) = tmp;
+	}
+
+	cv::String windowName = "Image Results"; //Name of the window
+	cv::namedWindow(windowName); // , cv::WINDOW_NORMAL); // Create a window
+	cv::moveWindow(windowName, 30, 40);
+	cv::resize(image, image, cv::Size(), scale, scale, CV_INTER_NN);
+	cv::cvtColor(image, image, cv::COLOR_Lab2BGR);
+	cv::imshow(windowName, image); // Show our image inside the created window.
+	cv::waitKey(1500); // Wait for any keystroke in the window
+	cv::destroyWindow(windowName); //destroy the created window
 }

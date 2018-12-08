@@ -39,5 +39,6 @@ public:
 	int getCurSize();
 	double getCurTemp();
 	void permutePCA(int pcolor);
+	void displayPixelImage(int scale);
 };
 

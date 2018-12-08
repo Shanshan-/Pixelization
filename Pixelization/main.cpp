@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 	double curTemp = startTemp;
 	Palette palette = Palette(&pimage, &spImage, paletteSize, startTemp, meanColor);
 	
-	while (curTemp > FINAL_TEMP) {
+	while (curTemp > FINAL_TEMP || palette.getCurSize == paletteSize) {
 		std::cout << "Starting iteration at temp " << curTemp << " ; Last change was " << palette.getChange() << std::endl;
 		//refine the superpixels
 		slic.refineSP();
@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
 		//refine the palette
 		palette.associatePalette();
 		palette.refinePalette();
+		palette.displayPixelImage(2);
 
 		if (palette.getChange() < TEMP_CHANGE_THRESH) {
 			std::cout << "Convergence has occured.  Expanding palette..." << std::endl;
