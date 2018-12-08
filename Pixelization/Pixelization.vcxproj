@@ -137,6 +137,7 @@
     <ClCompile Include="SuperPixel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="movable teapot code.txt" />
     <Text Include="tasks.txt" />
     <Text Include="tutorials.txt" />
   </ItemGroup>
