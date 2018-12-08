@@ -37,12 +37,12 @@ cv::vector<cv::Scalar> SPImage::getPalette() {
 	return palette;
 }
 
-SuperPixel SPImage::getPixel(int x, int y) {
-	return *(pixels[x*dimensions[1] + y]);
+SuperPixel* SPImage::getPixel(int x, int y) {
+	return pixels[x*dimensions[1] + y];
 }
 
-SuperPixel SPImage::getPixel(int num) {
-	return *(pixels[num]);
+SuperPixel* SPImage::getPixel(int num) {
+	return pixels[num];
 }
 
 int SPImage::numPixels() {

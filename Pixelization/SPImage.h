@@ -15,8 +15,8 @@ public:
 	bool expandPalette();
 	cv::vector<cv::Scalar> getPalette();
 	void assignCentroids();
-	SuperPixel getPixel(int x, int y);
-	SuperPixel getPixel(int num);
+	SuperPixel* getPixel(int x, int y);
+	SuperPixel* getPixel(int num);
 	int getSpSize();
 	int numPixels();
 	int rows();

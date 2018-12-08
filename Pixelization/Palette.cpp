@@ -6,7 +6,7 @@ Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Scalar 
 	temp = cT;
 	origImage = img1;
 	pixelImage = img2;
-	curSize = 1;
+	curSize = 0;
 	maxSize = size;
 	colors.reserve(size);
 	margProbs.reserve(size);
@@ -19,7 +19,7 @@ Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Vec3b s
 	temp = cT;
 	origImage = img1;
 	pixelImage = img2;
-	curSize = 1;
+	curSize = 0;
 	maxSize = size;
 	colors.reserve(size);
 	margProbs.reserve(size);
@@ -38,15 +38,15 @@ void Palette::associatePalette() {
 		std::vector<double> condProb = std::vector<double>(curSize, 0.1);
 		double agg = 0.0;
 		for (int y = 0; y < curSize; y++) {
-			double dist = -abs(colorDist(sPixel.getColor(), y));
-			condProb[y] = sPixel.getPaletteProbs()[y] * exp(dist / temp);
-			agg += sPixel.getPaletteProbs()[y] * exp(dist / temp);
+			double dist = -abs(colorDist((*sPixel).getColor(), y));
+			condProb[y] = (*sPixel).getPaletteProbs()[y] * exp(dist / temp);
+			agg += (*sPixel).getPaletteProbs()[y] * exp(dist / temp);
 		}
 
 		// set superpixel to condProb values, and start aggregating for marginal probability P(c_k)
 		for (int y = 0; y < curSize; y++) {
 			condProb[y] = condProb[y] / agg;
-			sPixel.setPaletteProb(y, condProb[y]);
+			(*sPixel).setPaletteProb(y, condProb[y]);
 			probs[y] += condProb[y] * weight(y);
 		}
 
@@ -66,8 +66,8 @@ void Palette::refinePalette() {
 	for (int x = 0; x < curSize; x++) {
 		cv::Scalar agg = cv::Scalar(0.0, 0.0, 0.0);
 		for (int num = 0; num < pixelImage->numPixels(); num++) {
-			auto pcolor = pixelImage->getPixel(num).getColor();
-			double factor = pixelImage->getPixel(num).getPaletteProbs()[x] / pixelImage->numPixels();
+			auto pcolor = (*pixelImage->getPixel(num)).getColor();
+			double factor = (*pixelImage->getPixel(num)).getPaletteProbs()[x] / pixelImage->numPixels();
 			agg[0] += pcolor[0];
 			agg[1] += pcolor[1];
 			agg[2] += pcolor[2];
@@ -107,7 +107,7 @@ void Palette::permutePCA(int pcolor) {
 	//get all of the superpixels assigned to this color
 	std::vector<int> assigned;
 	for (int num = 0; num < pixelImage->numPixels(); num++) {
-		if (pixelImage->getPixel(num).getPaletteColor() == pcolor) {
+		if ((*pixelImage->getPixel(num)).getPaletteColor() == pcolor) {
 			assigned.push_back(num);
 		}
 	}
@@ -115,9 +115,9 @@ void Palette::permutePCA(int pcolor) {
 	//get pixel data of all pixels in the assigned super pixels
 	cv::Mat data;
 	for (int num = 0; num < origImage->numPixels(); num++) {
-		auto tmp = std::find(assigned.begin(), assigned.end(), origImage->getPixel(num).getSpNum());
+		auto tmp = std::find(assigned.begin(), assigned.end(), (*origImage->getPixel(num)).getSpNum());
 		if (assigned.end() != tmp) {
-			data.push_back(origImage->getPixel(num).getColor());
+			data.push_back((*origImage->getPixel(num)).getColor());
 		}
 	}
 

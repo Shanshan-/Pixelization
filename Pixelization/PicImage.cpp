@@ -46,12 +46,12 @@ cv::Scalar PicImage::getAvgColor(int spNum) {
 }
 
 /* GETTERS AND SETTERS */
-Pixel PicImage::getPixel(int x, int y) {
-	return *(pixels[x*dimensions[1] + y]);
+Pixel* PicImage::getPixel(int x, int y) {
+	return pixels[x*dimensions[1] + y];
 }
 
-Pixel PicImage::getPixel(int num) {
-	return *(pixels[num]);
+Pixel* PicImage::getPixel(int num) {
+	return pixels[num];
 }
 
 int PicImage::numPixels() {
