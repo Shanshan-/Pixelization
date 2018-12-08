@@ -7,3 +7,9 @@ TODOs
 - add an image abstract class (rename currt Image class too)
 - perturbing of color in palette is along principal component axis in LAB space
 - maybe move mean color calcuation into the Palette class
+- LAB space is shifted: (usage in code is proportional, so shouldn't need to be adressed)
+	l = l * 255/100
+	a = a + 128
+	b = b + 128
+	https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html#cvtcolor
+	color examiner: http://colorizer.org/
