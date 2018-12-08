@@ -152,6 +152,22 @@ double Palette::weight(int num) {
 void Palette::addColor(cv::Scalar newColor) {
 	cv::Scalar startColor1 = cv::Scalar(newColor[0], newColor[1], newColor[2]);
 	colors.push_back({ startColor1, startColor1, startColor1, 0 });
+	curSize += 1;
+	if (curSize == 1) {
+		return;
+	}
+
+	//update superpixel probability vectors
+	for (int num = 0; num < pixelImage->numPixels(); num++) {
+		(*pixelImage->getPixel(num)).addNewProb();
+	}
+
+	//update marginal probabilities
+	margProbs.push_back(0.0);
+	for (int x = 0; x < curSize; x++) {
+		margProbs[x] = 1 / curSize;
+	}
+
 	//permutePCA(colors.size() - 1);
 }
 
@@ -189,12 +205,12 @@ void Palette::displayPixelImage(int scale) {
 
 	for (int x = 0; x < pixelImage->numPixels(); x++) {
 		cv::Vec3b tmp = cv::Vec3b(
-			(uchar)colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][0],
-			(uchar)colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][1],
-			(uchar)colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][2]);
+			(uchar)(colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][0]),
+			(uchar)(colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][1]),
+			(uchar)(colors[(*pixelImage->getPixel(x)).getPaletteColor()][REP_COLOR][2]));
 		int col = x % pixelImage->cols();
 		int row = int((x + 0.0) / (pixelImage->cols()));
-lab color 		image.at<cv::Vec3b>(row, col) = tmp;
+ 		image.at<cv::Vec3b>(row, col) = tmp;
 	}
 
 	cv::String windowName = "Image Results"; //Name of the window

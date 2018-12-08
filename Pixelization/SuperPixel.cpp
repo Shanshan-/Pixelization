@@ -102,3 +102,11 @@ void SuperPixel::setPaletteProb(int num, double prob) {
 		paletteColor = num;
 	}
 }
+
+void SuperPixel::addNewProb() {
+	double factor = 1.0 - (1.0 / (condProbs.size() + 1.0));
+	for (int x = 0; x < condProbs.size(); x++) {
+		condProbs[x] = condProbs[x] * factor;
+	}
+	condProbs.push_back(1.0 / (1.0 + condProbs.size()));
+}
