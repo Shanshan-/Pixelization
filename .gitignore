@@ -263,3 +263,6 @@ __pycache__/
 
 # Temporary files
 enc_temp_folder/*
+
+# Result Images
+Results/*
