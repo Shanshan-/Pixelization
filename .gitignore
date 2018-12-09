@@ -260,3 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 /Pixelization/movable teapot code.txt
+
+# Temporary files
+enc_temp_folder/*
