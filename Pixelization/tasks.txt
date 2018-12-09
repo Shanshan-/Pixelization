@@ -13,3 +13,4 @@ TODOs
 	b = b + 128
 	https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html#cvtcolor
 	color examiner: http://colorizer.org/
+- odd pixel display bug at low sp scale
