@@ -4,11 +4,11 @@ int main(int argc, char **argv) {
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	int paletteSize = 8;
-	int spSize = 2; //squirrel size = 9, scale = 10, mult = 2
+	int spSize = 36; //squirrel size = 9, scale = 10, mult = 2
 
 	//load image
-	//cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
-	cv::Mat image = cv::imread(IMG_PATH "test.png");
+	cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
+	//cv::Mat image = cv::imread(IMG_PATH "test.png");
 	//TODO: program breaks if length and width are not exact multiples of spSize
 	if (image.empty()) {
 		char c;
@@ -51,8 +51,8 @@ int main(int argc, char **argv) {
 		//refine the palette
 		palette.associatePalette();
 		palette.refinePalette();
-		std::string file = RESULTS_PATH "test curTemp ";
-		file.append(std::to_string(curTemp));
+		std::string file = RESULTS_PATH "squirrel curTemp ";
+		file.append(std::to_string(int(curTemp)));
 		file.append(" pic ");
 		file.append(std::to_string(count));
 		file.append(".png");

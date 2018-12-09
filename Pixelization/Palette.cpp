@@ -24,7 +24,7 @@ Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Vec3b s
 	origImage = img1;
 	pixelImage = img2;
 	curSize = 2;
-	maxSize = size;
+	maxSize = 2 * size;
 	colors.reserve(2 * size);
 	margProbs.reserve(2 * size);
 	paletteChange = 0.0;
@@ -51,7 +51,10 @@ void Palette::associatePalette() { //associate superpixels to colors in the pale
 		// set superpixel to condProb values, and start aggregating for marginal probability P(c_k)
 		for (int y = 0; y < curSize; y++) {
 			(*sPixel).setPaletteProb(y, condProb[y]);
-		} 
+		}
+
+		//normalize the probabilities to 1
+		sPixel->normPaletteProbs();
 	}
 
 	//^v seperated to help with debugging
@@ -171,9 +174,12 @@ void Palette::permutePCA(int pcolor) {
 	//cv::Mat data(pixelImage->rows(), pixelImage->cols(), CV_8UC3, cv::Scalar(0, 0, 0));
 	cv::Mat data;
 	for (int num = 0; num < origImage->numPixels(); num++) {
-		auto tmp = std::find(assigned.begin(), assigned.end(), (*origImage->getPixel(num)).getSpNum());
+		auto pixel = origImage->getPixel(num);
+		auto tmp = std::find(assigned.begin(), assigned.end(), pixel->getSpNum());
 		if (assigned.end() != tmp) {
-			data.push_back((*origImage->getPixel(num)).getColor());
+			cv::Vec3b color = cv::Vec3b((uchar)(pixel->getColor()[0]),
+				(uchar)(pixel->getColor()[1]), (uchar)(pixel->getColor()[2]));
+			data.push_back(color);
 			//TODO: fix this conversion
 			/*int xcoor = int(std::floor(num / pixelImage->cols()));
 			int ycoor = num % pixelImage->cols();
@@ -183,20 +189,27 @@ void Palette::permutePCA(int pcolor) {
 			data.at<cv::Vec3b>(xcoor, ycoor) = color;*/
 		}
 	}
+	std::cout << data.size() << std::endl;
+
+	if (data.empty()) {
+		colors[pcolor + 1][0] = colors[pcolor][0];
+		colors[pcolor + 1][1] = colors[pcolor][1];
+		colors[pcolor + 1][2] = colors[pcolor][2];
+		return;
+	}
 
 	//perform pca
-	std::cout << data.size() << std::endl;
 	data = data.reshape(1, 3);
 	data.convertTo(data, CV_8U);
 	cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_COL);
 
 	//permute palette[pcolor] along axis
+	colors[pcolor + 1][0] = colors[pcolor][0] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 0);
+	colors[pcolor + 1][1] = colors[pcolor][1] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 1);
+	colors[pcolor + 1][2] = colors[pcolor][2] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 2);
 	colors[pcolor][0] = colors[pcolor][0] + PCA_FACTOR * pca.eigenvectors.at<float>(0, 0);
 	colors[pcolor][1] = colors[pcolor][1] + PCA_FACTOR * pca.eigenvectors.at<float>(0, 1);
 	colors[pcolor][2] = colors[pcolor][2] + PCA_FACTOR * pca.eigenvectors.at<float>(0, 2);
-	colors[pcolor + 1][0] = colors[pcolor + 1][0] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 0);
-	colors[pcolor + 1][1] = colors[pcolor + 1][1] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 1);
-	colors[pcolor + 1][2] = colors[pcolor + 1][2] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 2);
 }
 
 double Palette::colorDist(cv::Scalar icolor, int pcolor) {

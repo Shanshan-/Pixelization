@@ -33,6 +33,7 @@ public:
 	void setPaletteColor(int color);
 	void setCentroid(double x, double y);
 	void setPaletteProb(int num, double prob);
+	void normPaletteProbs();
 	void addNewProb();
 };
 

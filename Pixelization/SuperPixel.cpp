@@ -116,6 +116,14 @@ void SuperPixel::setPaletteProb(int num, double prob) {
 	}
 }
 
+void SuperPixel::normPaletteProbs() {
+	double agg = std::accumulate(condProbs.begin(), condProbs.end(), 0.0);
+	double factor = 1.0 / agg;
+	for (int x = 0; x < int(condProbs.size()); x++) {
+		condProbs[x] *= factor;
+	}
+}
+
 void SuperPixel::addNewProb() {
 	double factor = 1.0 - (1.0 / (int(condProbs.size()) + 1.0));
 	for (int x = 0; x < int(condProbs.size()); x++) {

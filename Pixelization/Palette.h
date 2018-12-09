@@ -9,7 +9,7 @@
 #define VARIANCE 3
 #define PCA_FACTOR 20
 #define EXPAND_THRESH_FACTOR 0.7
-#define SPLIT_THRESH 1 //TODO: experiment with tweaking this number
+#define SPLIT_THRESH 5 //TODO: experiment with tweaking this number
 #define DISPLAY_TIME 3000
 
 class Palette {
