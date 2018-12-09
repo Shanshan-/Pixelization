@@ -7,6 +7,7 @@
 #define CL1_COLOR 1
 #define CL2_COLOR 2
 #define VARIANCE 3
+#define PCA_FACTOR 5
 #define EXPAND_THRESH_FACTOR 0.7
 #define THRESHOLD 30 //TODO: experiment with tweaking this number
 
@@ -39,6 +40,7 @@ public:
 	int getCurSize();
 	double getCurTemp();
 	void permutePCA(int pcolor);
-	void displayPixelImage(int scale);
+	void displayPixelImage(int scale, bool wait=FALSE);
+	cv::Scalar getColor(int pcolor);
 };
 

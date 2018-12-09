@@ -6,6 +6,15 @@ SuperPixel::SuperPixel() {
 	exit(-1);
 }
 
+SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num) {
+	xcoor = spx;
+	ycoor = spy;
+	spNum = num;
+	size = pixSize;
+	paletteColor = 0;
+	condProbs.push_back({ 1.0 });
+}
+
 SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar curColor) {
 	xcoor = spx;
 	ycoor = spy;
@@ -42,7 +51,7 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 
 
 /* GETTERS AND SETTERS */
-cv::Scalar SuperPixel::getColor() {
+cv::Scalar SuperPixel::getAvgColor() {
 	return color;
 }
 
@@ -74,11 +83,11 @@ std::vector<double> SuperPixel::getPaletteProbs() {
 	return condProbs;
 }
 
-void SuperPixel::setColor(cv::Scalar newColor) {
+void SuperPixel::setAvgColor(cv::Scalar newColor) {
 	color = newColor;
 }
 
-void SuperPixel::setColor(cv::Vec3b newColor) {
+void SuperPixel::setAvgColor(cv::Vec3b newColor) {
 	color = cv::Scalar(newColor[0], newColor[1], newColor[2]);
 }
 
@@ -109,4 +118,5 @@ void SuperPixel::addNewProb() {
 		condProbs[x] = condProbs[x] * factor;
 	}
 	condProbs.push_back(1.0 / (1.0 + condProbs.size()));
+	//condProbs.push_back(0.0);
 }

@@ -9,16 +9,18 @@ private:
 	int ycoor; //in pixel image
 	int spNum;
 	int size;
+	int count = 0;
 	cv::Scalar color;
 	int paletteColor;
 	std::vector<double> condProbs;
 
 public:
 	SuperPixel();
+	SuperPixel(int spx, int spy, int pixSize, int num);
 	SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar curColor);
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num);
 	SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar color);
-	cv::Scalar getColor();
+	cv::Scalar getAvgColor();
 	int getPaletteColor();
 	double getImgXCoor();
 	double getImgYCoor();
@@ -26,8 +28,8 @@ public:
 	int getSpYCoor();
 	int getSpNum();
 	std::vector<double> getPaletteProbs();
-	void setColor(cv::Scalar color);
-	void setColor(cv::Vec3b color);
+	void setAvgColor(cv::Scalar color);
+	void setAvgColor(cv::Vec3b color);
 	void setPaletteColor(int color);
 	void setCentroid(double x, double y);
 	void setPaletteProb(int num, double prob);

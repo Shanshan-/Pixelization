@@ -1,6 +1,7 @@
 #pragma once
 #include "base.h"
 #include "SuperPixel.h"
+#include "PicImage.h"
 
 class SPImage {
 private:
@@ -11,10 +12,8 @@ private:
 
 public:
 	SPImage();
-	SPImage(int xdim, int ydim, int size, cv::Scalar meanColor);
-	bool expandPalette();
+	SPImage(int xdim, int ydim, int size, PicImage* origImage);
 	cv::vector<cv::Scalar> getPalette();
-	void assignCentroids();
 	SuperPixel* getPixel(int x, int y);
 	SuperPixel* getPixel(int num);
 	int getSpSize();

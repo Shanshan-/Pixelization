@@ -28,31 +28,32 @@ Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Vec3b s
 	paletteChange = 0.0;
 }
 
-void Palette::associatePalette() {
-	//associate superpixels to colors in the palette
-	std::vector<double> probs = std::vector<double>(curSize, 0.0);
+void Palette::associatePalette() { //associate superpixels to colors in the palette
+	// calculate the conditional probabillities P(c_k | p_s)
 	for (int x = 0; x < pixelImage->numPixels(); x++) {
 		auto sPixel = pixelImage->getPixel(x);
 
-		// calculate the conditional probabillities P(c_k | p_s)
 		std::vector<double> condProb = std::vector<double>(curSize, 0.1);
-		double agg = 0.0;
 		for (int y = 0; y < curSize; y++) {
-			double dist = -abs(colorDist((*sPixel).getColor(), y));
+			double dist = -abs(colorDist((*sPixel).getAvgColor(), y));
 			condProb[y] = (*sPixel).getPaletteProbs()[y] * exp(dist / temp);
-			agg += condProb[y];
 		}
 
 		// set superpixel to condProb values, and start aggregating for marginal probability P(c_k)
 		for (int y = 0; y < curSize; y++) {
-			condProb[y] = condProb[y] / agg;
 			(*sPixel).setPaletteProb(y, condProb[y]);
-			probs[y] += condProb[y] * weight(y);
-		}
-
+		} 
 	}
 
-	// update the marginal probabilities in the palette
+	//^v seperated to help with debugging
+
+	// update the marginal probabilities in the palette P(c_k)
+	std::vector<double> probs = std::vector<double>(curSize, 0.0);
+	for (int y = 0; y < curSize; y++) {
+		for (int x = 0; x < pixelImage->numPixels(); x++) {
+			probs[y] += pixelImage->getPixel(x)->getPaletteProbs()[y] * weight(x);
+		}
+	}
 	for (int x = 0; x < curSize; x++) {
 		margProbs[x] = probs[x];
 	}
@@ -66,15 +67,16 @@ void Palette::refinePalette() {
 	for (int x = 0; x < curSize; x++) {
 		cv::Scalar agg = cv::Scalar(0.0, 0.0, 0.0);
 		for (int num = 0; num < pixelImage->numPixels(); num++) {
-			auto pcolor = (*pixelImage->getPixel(num)).getColor();
-			double factor = (*pixelImage->getPixel(num)).getPaletteProbs()[x] / pixelImage->numPixels();
-			agg[0] += pcolor[0];
-			agg[1] += pcolor[1];
-			agg[2] += pcolor[2];
+			auto pcolor = (*pixelImage->getPixel(num)).getAvgColor();
+			//double factor = (*pixelImage->getPixel(num)).getPaletteProbs()[x] / pixelImage->numPixels();
+			double factor = (*pixelImage->getPixel(num)).getPaletteProbs()[x] * weight(x);
+			agg[0] += pcolor[0] * factor;
+			agg[1] += pcolor[1] * factor;
+			agg[2] += pcolor[2] * factor;
 		}
 		for (int num = 0; num < 3; num++) {
-			agg[num] /= margProbs[x];
-			paletteChange += abs(colors[x][REP_COLOR][num] - agg[num]);
+			agg[num] = agg[num] / margProbs[x];
+			paletteChange += abs((colors[x][REP_COLOR][num] * 100/255) - (agg[num] * 100/255));
 		}
 		editColor(x, agg);
 	}
@@ -83,6 +85,7 @@ void Palette::refinePalette() {
 bool Palette::expandPalette() {
 	//std::cout << "Palette.expandPalette() has not yet been implemented.";
 	pcaAll();
+	paletteChange = 0.0;
 
 	//find the palette color with the largest variance
 	int maxColor = 0;
@@ -94,6 +97,8 @@ bool Palette::expandPalette() {
 
 	//add the two component colors to the palette, and remove the old
 	addColor(colors[maxColor][CL2_COLOR]);
+	margProbs[maxColor] /= 2;
+	margProbs[curSize - 1] = margProbs[maxColor];
 	editColor(maxColor, colors[maxColor][CL1_COLOR]);
 
 	//lower the annealing temperature
@@ -128,17 +133,17 @@ void Palette::permutePCA(int pcolor) {
 
 	//permute palette[pcolor] along axis
 	auto color1 = colors[pcolor][REP_COLOR];
-	colors[pcolor][CL1_COLOR][0] = color1[0] + pca.eigenvectors.at<float>(0, 0);
-	colors[pcolor][CL1_COLOR][1] = color1[1] + pca.eigenvectors.at<float>(0, 1);
-	colors[pcolor][CL1_COLOR][2] = color1[2] + pca.eigenvectors.at<float>(0, 2);
-	colors[pcolor][CL2_COLOR][0] = color1[0] - pca.eigenvectors.at<float>(0, 0);
-	colors[pcolor][CL2_COLOR][1] = color1[1] - pca.eigenvectors.at<float>(0, 1);
-	colors[pcolor][CL2_COLOR][2] = color1[2] - pca.eigenvectors.at<float>(0, 2);
+	colors[pcolor][CL1_COLOR][0] = color1[0] + PCA_FACTOR * pca.eigenvectors.at<float>(0, 0);
+	colors[pcolor][CL1_COLOR][1] = color1[1] + PCA_FACTOR * pca.eigenvectors.at<float>(0, 1);
+	colors[pcolor][CL1_COLOR][2] = color1[2] + PCA_FACTOR * pca.eigenvectors.at<float>(0, 2);
+	colors[pcolor][CL2_COLOR][0] = color1[0] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 0);
+	colors[pcolor][CL2_COLOR][1] = color1[1] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 1);
+	colors[pcolor][CL2_COLOR][2] = color1[2] - PCA_FACTOR * pca.eigenvectors.at<float>(0, 2);
 	colors[pcolor][VARIANCE] = pca.eigenvalues.at<float>(0);
 }
 
 double Palette::colorDist(cv::Scalar icolor, int pcolor) {
-	double dl = icolor[0] - colors[pcolor][REP_COLOR][0];
+	double dl = (icolor[0] * 100/255) - (colors[pcolor][REP_COLOR][0] * 100/255);
 	double da = icolor[1] - colors[pcolor][REP_COLOR][1];
 	double db = icolor[2] - colors[pcolor][REP_COLOR][2];
 	return sqrt(pow(dl, 2) + pow(da, 2) + pow(db, 2));
@@ -146,7 +151,7 @@ double Palette::colorDist(cv::Scalar icolor, int pcolor) {
 
 double Palette::weight(int num) {
 	//std::cout << "Palette.weight() has not yet been implemented; defaulting to uniform.\n";
-	return 1.0;
+	return 1.0 / pixelImage->numPixels();
 }
 
 void Palette::addColor(cv::Scalar newColor) {
@@ -164,9 +169,6 @@ void Palette::addColor(cv::Scalar newColor) {
 
 	//update marginal probabilities
 	margProbs.push_back(0.0);
-	for (int x = 0; x < curSize; x++) {
-		margProbs[x] = 1 / curSize;
-	}
 
 	//permutePCA(colors.size() - 1);
 }
@@ -200,7 +202,7 @@ double Palette::getCurTemp() {
 	return temp;
 }
 
-void Palette::displayPixelImage(int scale) {
+void Palette::displayPixelImage(int scale, bool wait) {
 	cv::Mat image(pixelImage->rows(), pixelImage->cols(), CV_8UC3, cv::Scalar(0,0,0));
 
 	for (int x = 0; x < pixelImage->numPixels(); x++) {
@@ -221,4 +223,8 @@ void Palette::displayPixelImage(int scale) {
 	cv::imshow(windowName, image); // Show our image inside the created window.
 	cv::waitKey(1500); // Wait for any keystroke in the window
 	cv::destroyWindow(windowName); //destroy the created window
+}
+
+cv::Scalar Palette::getColor(int pcolor) {
+	return colors[pcolor][REP_COLOR];
 }

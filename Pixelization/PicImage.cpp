@@ -36,13 +36,25 @@ void PicImage::assignSP(int spSize) {
 		int tmp1 = int((x / dimensions[1]) / spSize) * (dimensions[1] / spSize);
 		int tmp2 = int((x % dimensions[1]) / spSize);
 		(*pixels[x]).setSpNum(tmp1 + tmp2);
+		//(*pixels[x]).setSpNum(-1);
 	}
 }
 
 cv::Scalar PicImage::getAvgColor(int spNum) {
-	//TODO: implement this
-	std::cout << "PicImage.getAvgColor() has not been implemented yet.";
-	return NULL;
+	cv::Scalar agg = cv::Scalar({ 0.0, 0.0, 0.0, 0.0 });
+	int count = 0;
+	for (int num = 0; num < pixels.size(); num++) {
+		if (pixels[num]->getSpNum() == spNum) {
+			agg[0] += pixels[num]->getColor()[0];
+			agg[1] += pixels[num]->getColor()[1];
+			agg[2] += pixels[num]->getColor()[2];
+			count += 1;
+		}
+	}
+	agg[0] /= count;
+	agg[1] /= count;
+	agg[2] /= count;
+	return agg;
 }
 
 /* GETTERS AND SETTERS */
