@@ -18,5 +18,5 @@
 #define SP_DATA_COUNT 5
 
 cv::Scalar getMeanColor(cv::Mat image);
-double getStartTemp(cv::Mat image);
+double initPCA(cv::Mat image, cv::Scalar* start1, cv::Scalar* start2);
 void initializeSP(PicImage* pimage, SPImage* spImage, int size);

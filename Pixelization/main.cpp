@@ -19,8 +19,12 @@ int main(int argc, char **argv) {
 	//determine the mean color of image and the starting temperature
 	cv::cvtColor(image, image, cv::COLOR_BGR2Lab);
 	cv::Scalar meanColor = getMeanColor(image);
-	double startTemp = getStartTemp(image);
 
+	//perform PCA, and extract results
+	cv::Scalar startColor1 = cv::Scalar({ meanColor[0], meanColor[1], meanColor[2] });
+	cv::Scalar startColor2 = cv::Scalar({ meanColor[0], meanColor[1], meanColor[2] });
+	double startTemp = initPCA(image, &startColor1, &startColor2);
+	
 	//generate image classes to work with
 	PicImage pimage = PicImage(image);
 	SPImage spImage = SPImage(image.rows, image.cols, spSize, &pimage);
@@ -31,7 +35,7 @@ int main(int argc, char **argv) {
 	std::cout << "Superpixels initialized\n";
 
 	//initialize other variables/objects needed for loop
-	Palette palette = Palette(&pimage, &spImage, paletteSize, startTemp, meanColor);
+	Palette palette = Palette(&pimage, &spImage, paletteSize, startTemp, startColor1, startColor2);
 	Slic slic = Slic(&pimage, &spImage, &palette);
 	double curTemp = 1.1 * startTemp;
 	
@@ -79,35 +83,7 @@ cv::Scalar getMeanColor(cv::Mat image) {
 	return result;
 }
 
-double getStartTemp(cv::Mat image) {
-	/*////reshape the image into a single line
-	//cv::Mat data = image.reshape(1, image.rows * image.cols * 3);
-	//cv::PCA pca = cv::PCA(data, cv::Mat(), CV_PCA_DATA_AS_COL, 3);
-	//std::cout << pca.eigenvectors << std::endl;
-	//std::cout << pca.eigenvalues << std::endl;
-
-	//split the image into three component channels
-	//cv::Mat lab = cv::Mat(1, image.rows * image.cols * 3, CV_32F);
-	cv::Mat lab[3];
-	cv::split(image, lab);
-	//int maxvariance = 
-
-	//perform PCA on each
-	for (int channel = 0; channel < 3; channel++) {
-		cv::normalize(lab[channel], lab[channel], 0, 255, cv::NORM_MINMAX);
-		cv::PCA pca = cv::PCA(lab[channel], cv::Mat(), CV_PCA_DATA_AS_ROW, 2);
-		std::cout << pca.eigenvectors << std::endl;
-		std::cout << pca.eigenvalues << std::endl;
-
-		//reduce to 1 dimension
-		//std::cout << pca.eigenvectors << std::endl;
-		//std::cout << pca.eigenvalues << std::endl;
-		cv::Mat final = pca.eigenvectors.row(0)*lab[channel].t();
-
-		//calculate the mean and variance
-
-	}*/
-
+double initPCA(cv::Mat image, cv::Scalar* start1, cv::Scalar* start2) {
 	//Assemble a data matrix
 	cv::Mat data = image.reshape(1,3); //switching to (3,1) changes image to 1d color image
 
@@ -126,15 +102,19 @@ double getStartTemp(cv::Mat image) {
 	/*std::cout << pca.eigenvalues.type() << std::endl;
 	std::cout << pca.eigenvalues.at<float>(0) << std::endl;*/
 
+	//set the start colors
+	(*start1)[0] += PCA_FACTOR * pca.eigenvectors.at<float>(0, 0);
+	(*start1)[1] += PCA_FACTOR * pca.eigenvectors.at<float>(0, 1);
+	(*start1)[2] += PCA_FACTOR * pca.eigenvectors.at<float>(0, 2);
+	(*start2)[0] -= PCA_FACTOR * pca.eigenvectors.at<float>(0, 0);
+	(*start2)[1] -= PCA_FACTOR * pca.eigenvectors.at<float>(0, 1);
+	(*start2)[2] -= PCA_FACTOR * pca.eigenvectors.at<float>(0, 2);
+
 	//return the initial temperature 
 	return 2*pca.eigenvalues.at<float>(0);
 
 	//to find cv::Mat.type()
 	//https://stackoverflow.com/questions/10167534/how-to-find-out-what-type-of-a-mat-object-is-with-mattype-in-opencv
-
-	//using namespace cv;
-	////PCA pca = cv::PCA(image, cv::Mat(), CV_PCA_DATA_AC_ROW);
-	//return 600.0; //TODO: replace this with actual valid value
 }
 
 void initializeSP(PicImage* pimage, SPImage* spImage, int size) {
