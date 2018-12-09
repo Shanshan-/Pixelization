@@ -102,7 +102,7 @@ void SuperPixel::setCentroid(double x, double y) {
 
 void SuperPixel::setPaletteProb(int num, double prob) {
 	//update the probability vector
-	if (condProbs.size() < num)
+	if (int(condProbs.size()) < num)
 		condProbs.resize(num);
 	condProbs[num] = prob;
 
@@ -113,8 +113,8 @@ void SuperPixel::setPaletteProb(int num, double prob) {
 }
 
 void SuperPixel::addNewProb() {
-	double factor = 1.0 - (1.0 / (condProbs.size() + 1.0));
-	for (int x = 0; x < condProbs.size(); x++) {
+	double factor = 1.0 - (1.0 / (int(condProbs.size()) + 1.0));
+	for (int x = 0; x < int(condProbs.size()); x++) {
 		condProbs[x] = condProbs[x] * factor;
 	}
 	condProbs.push_back(1.0 / (1.0 + condProbs.size()));

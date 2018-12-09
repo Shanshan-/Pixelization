@@ -7,8 +7,8 @@ SPImage::SPImage() {
 }
 
 SPImage::SPImage(int xdim, int ydim, int size, PicImage* origImage) {
-	dimensions[0] = std::floor((double)xdim / (double)size);
-	dimensions[1] = std::floor((double)ydim / (double)size);
+	dimensions[0] = int(std::floor((double)xdim / (double)size));
+	dimensions[1] = int(std::floor((double)ydim / (double)size));
 	spSize = size;
 	pixels.resize(dimensions[0] * dimensions[1]);
 
@@ -74,7 +74,7 @@ int SPImage::cols() {
 
 /* PRINT FUNCTIONS */
 void SPImage::printCentroids() {
-	for (int x = 0; x < pixels.size(); x++) {
+	for (int x = 0; x < int(pixels.size()); x++) {
 		std::cout << "(" << (*pixels[x]).getImgXCoor()
 			<< "," << (*pixels[x]).getImgYCoor() << ")" << std::endl;
 	}

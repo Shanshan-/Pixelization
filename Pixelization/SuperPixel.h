@@ -9,7 +9,7 @@ private:
 	int ycoor; //in pixel image
 	int spNum;
 	int size;
-	int count = 0;
+	//int count = 0;
 	cv::Scalar color;
 	int paletteColor;
 	std::vector<double> condProbs;

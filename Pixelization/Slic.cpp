@@ -121,11 +121,11 @@ void Slic::refineSP() { //runs one step of SLIC superpixel refinement
 	//assign superpixel values (color and center)
 	for (int x = 0; x < pixelImage->numPixels(); x++) {
 		auto spixel = pixelImage->getPixel(x);
-		//if (centData[x][COUNT] != 0) {
-		(*spixel).setCentroid(centData[x][XCOOR], centData[x][YCOOR]);
-			//auto newColor = fimage2.at<cv::Vec3b>(x / pixelImage->cols(), x % pixelImage->cols());
-			//(*spixel).setAvgColor(newColor);
-		//}
+		if (centData[x][COUNT] != 0) {
+			(*spixel).setCentroid(centData[x][XCOOR], centData[x][YCOOR]);
+			auto newColor = fimage2.at<cv::Vec3b>(x / pixelImage->cols(), x % pixelImage->cols());
+			(*spixel).setAvgColor(newColor);
+		}
 	}
 	for (int x = 0; x < origImage->numPixels(); x++) {
 		origImage->getPixel(x)->setSpNum(newAssigns[x]);

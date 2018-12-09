@@ -9,7 +9,7 @@
 #define VARIANCE 3
 #define PCA_FACTOR 5
 #define EXPAND_THRESH_FACTOR 0.7
-#define THRESHOLD 30 //TODO: experiment with tweaking this number
+#define SPLIT_THRESH 5 //TODO: experiment with tweaking this number
 
 class Palette {
 private:

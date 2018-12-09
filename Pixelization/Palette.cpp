@@ -33,6 +33,7 @@ void Palette::associatePalette() { //associate superpixels to colors in the pale
 	for (int x = 0; x < pixelImage->numPixels(); x++) {
 		auto sPixel = pixelImage->getPixel(x);
 
+		//determine the probability of association with each color given current superpixel
 		std::vector<double> condProb = std::vector<double>(curSize, 0.1);
 		for (int y = 0; y < curSize; y++) {
 			double dist = -abs(colorDist((*sPixel).getAvgColor(), y));
