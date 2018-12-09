@@ -14,3 +14,24 @@ TODOs
 	https://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html#cvtcolor
 	color examiner: http://colorizer.org/
 - odd pixel display bug at low sp scale
+
+MCDA notes
+- palette size should always be some multiple of two
+- use PCA to divide starting color into two slight permutations
+- add both colors to the palette, keeping track of what two colors are a pair
+- start loop:
+	- perform association, refinement, etc. as if the two were seperate colors
+	- upon convergence, check the euclidean distance between each pair
+	- if the distance is greater than some threshold, then register each as a seperate color
+		- if multiple, start with greatest distance first
+	- take average of all remaining pairs as to be the new palette
+	- perform PCA on each color to determine representatives, and continue with association
+		- merge pair superpixels if cluster merges
+- small details
+	- maximum size of palette should be 2*user input, since two centers per palette color
+	- add method:
+		- returns representative color (avg of clusters)
+		- returns distance between palette clusters
+		- splits a color into two
+	- do not need to perform early PCA, since each pair already has its associated super pixels
+
