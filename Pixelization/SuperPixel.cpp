@@ -12,7 +12,8 @@ SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num) {
 	spNum = num;
 	size = pixSize;
 	paletteColor = 0;
-	condProbs.push_back({ 1.0 });
+	condProbs.push_back({ 0.5 });
+	condProbs.push_back({ 0.5 });
 }
 
 SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar curColor) {
@@ -22,7 +23,8 @@ SuperPixel::SuperPixel(int spx, int spy, int pixSize, int num, cv::Scalar curCol
 	size = pixSize;
 	color = curColor;
 	paletteColor = 0;
-	condProbs.push_back({ 1.0 });
+	condProbs.push_back({ 0.5 });
+	condProbs.push_back({ 0.5 });
 }
 
 SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num) {
@@ -34,7 +36,8 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	size = pixSize;
 	color = NULL;
 	paletteColor = 0;
-	condProbs.push_back({ 1.0 });
+	condProbs.push_back({ 0.5 });
+	condProbs.push_back({ 0.5 });
 }
 
 SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int num, cv::Scalar curColor) {
@@ -46,7 +49,8 @@ SuperPixel::SuperPixel(double x, double y, int spx, int spy, int pixSize, int nu
 	size = pixSize;
 	color = curColor;
 	paletteColor = 0;
-	condProbs.push_back({ 1.0 });
+	condProbs.push_back({ 0.5 });
+	condProbs.push_back({ 0.5 });
 }
 
 

@@ -4,10 +4,11 @@ int main(int argc, char **argv) {
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	int paletteSize = 8;
-	int spSize = 36; //squirrel size = 9, scale = 10, mult = 2
+	int spSize = 2; //squirrel size = 9, scale = 10, mult = 2
 
 	//load image
-	cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
+	//cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
+	cv::Mat image = cv::imread(IMG_PATH "test.png");
 	//TODO: program breaks if length and width are not exact multiples of spSize
 	if (image.empty()) {
 		char c;
@@ -38,9 +39,11 @@ int main(int argc, char **argv) {
 	Palette palette = Palette(&pimage, &spImage, paletteSize, startTemp, startColor1, startColor2);
 	Slic slic = Slic(&pimage, &spImage, &palette);
 	double curTemp = 1.1 * startTemp;
+	int count = 0;
 	
 	while (curTemp > FINAL_TEMP) {
 		std::cout << "Starting iteration at temp " << curTemp << " : ";
+		count++;
 		//refine the superpixels
 		slic.refineSP();
 		//pimage.printAssignments();
@@ -48,7 +51,12 @@ int main(int argc, char **argv) {
 		//refine the palette
 		palette.associatePalette();
 		palette.refinePalette();
-		palette.displayPixelImage(30);
+		std::string file = RESULTS_PATH "test curTemp ";
+		file.append(std::to_string(curTemp));
+		file.append(" pic ");
+		file.append(std::to_string(count));
+		file.append(".png");
+		palette.displayPixelImage(30, file);
 		std::cout << "Change value = " << palette.getChange() << std::endl;
 
 		if (palette.getChange() < TEMP_CHANGE_THRESH) {
@@ -56,14 +64,14 @@ int main(int argc, char **argv) {
 				std::cout << "Convergence has occured with a full palette.  Outputting...\n";
 				break;
 			}
-			std::cout << "Convergence has occured.  Expanding palette...\n";
+			std::cout << "Convergence has occured.  Attempting to expand palette...\n";
 			palette.expandPalette();
 			curTemp = palette.getCurTemp();
 		}
 	}
 
 	// Output image
-	palette.displayPixelImage(10, TRUE);
+	palette.displayPixelImage(10, "", TRUE);
 	return 0;
 }
 

@@ -8,8 +8,9 @@
 #include "Pixel.h"
 
 #define IMG_PATH "../Images/"
+#define RESULTS_PATH "../Results/"
 #define FINAL_TEMP 1
-#define TEMP_CHANGE_THRESH 0.05
+#define TEMP_CHANGE_THRESH 1
 #define SP_DATA_XCOOR 0
 #define SP_DATA_YCOOR 1
 #define SP_DATA_LVAL 2
