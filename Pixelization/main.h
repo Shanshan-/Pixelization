@@ -18,7 +18,9 @@
 #define SP_DATA_AVAL 3
 #define SP_DATA_BVAL 4
 #define SP_DATA_COUNT 5
+#define PALETTE_SIZE 8
 
 cv::Scalar getMeanColor(cv::Mat image);
 double initPCA(cv::Mat image, cv::Scalar* start1, cv::Scalar* start2);
 void initializeSP(PicImage* pimage, SPImage* spImage, int size);
+void runAlgo(std::string filename, int spSize, int displayScale);
