@@ -12,11 +12,11 @@ int main(int argc, char **argv) {
 	while (TRUE) {
 		//get file location
 		if (defaultLoc == 'n')
-			std::cout << "\nEnter full path to desired image: ";
+			std::cout << "Enter full path to desired image: ";
 		else if (defaultLoc == 'y')
-			std::cout << "\nEnter image filename: " << IMG_PATH;
+			std::cout << "Enter image filename: " << IMG_PATH;
 		else
-			std::cout << "\nInvalid input. Using default location: " << IMG_PATH;
+			std::cout << "Invalid input. Using default location: " << IMG_PATH;
 		std::cin >> file;
 
 		//try to read the image
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	//int spSize = 10; //squirrel size = 9, scale = 10, mult = 2
 	//int displayScale = 30;
-	//std::string filename = IMG_PATH "squirrel.jpg"; //spSize 9, scale 10
+	//std::string filename = IMG_PATH "squirrel.jpg"; //spSize 36, scale 30
 	//std::string filename = IMG_PATH "chi.jpg"; //spSize 10, scale 30
 	//std::string filename = IMG_PATH "flowers.jpg"; //spSize 36, scale 10
 	//std::string filename = IMG_PATH "test.png"; //spSize 2
@@ -65,6 +65,16 @@ int main(int argc, char **argv) {
 }
 
 void runAlgo(std::string filename, int spSize, int displayScale) {
+	//check if user constraint should be activated
+	bool constrained = false;
+	char c = 'l';
+	/*while (c != 'y' && c != 'n') {
+		std::cout << "Would you like to activate user constraints? (y/n)? ";
+		std::cin >> c;
+		if (c == 'n')
+			constrained = false;
+	}*/
+
 	//load image
 	cv::Mat image = cv::imread(filename);
 
@@ -91,8 +101,10 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 	Slic slic = Slic(&pimage, &spImage, &palette);
 	double curTemp = 1.1 * startTemp;
 	int count = 0;
-
-	while (curTemp > FINAL_TEMP) {
+	//std::cout << palette.importMat(RESULTS_PATH "squirrel mask.png"); //TODO: importance map is a dud
+	   
+	bool reiterate = false;
+	while (curTemp > FINAL_TEMP || reiterate) {
 		std::cout << "Starting iteration at temp " << curTemp << " : ";
 		count++;
 		//refine the superpixels
@@ -102,7 +114,7 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 		//refine the palette
 		palette.associatePalette();
 		palette.refinePalette();
-		std::string file = RESULTS_PATH "chi curTemp ";
+		std::string file = RESULTS_PATH "squirrel curTemp ";
 		file.append(std::to_string(int(curTemp)));
 		file.append(" pic ");
 		file.append(std::to_string(count));
@@ -111,6 +123,26 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 		std::cout << "Change value = " << palette.getChange() << std::endl;
 
 		if (palette.getChange() < TEMP_CHANGE_THRESH) {
+			//check if user wants to contrain pixels
+			bool constrainPixel = true;
+			c = 'l';
+			while (c != 'y' && c != 'n' && constrained) {
+				std::cout << "Would you like to activate user constraints? (y/n)? ";
+				std::cin >> c;
+				if (c == 'n')
+					break;
+			}
+
+			//check if user wants to constrain the palette
+			bool constrainPal = true;
+			c = 'l';
+			while (c != 'y' && c != 'n' && constrained) {
+				std::cout << "Would you like to activate user constraints? (y/n)? ";
+				std::cin >> c;
+				if (c == 'n')
+					break;
+			}
+
 			if (palette.getCurSize() == PALETTE_SIZE * 2) {
 				std::cout << "Convergence has occured with a full palette.  Outputting...\n";
 				break;

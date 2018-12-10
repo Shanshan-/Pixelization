@@ -12,6 +12,7 @@
 class Palette {
 private:
 	std::vector<double> importanceMap;
+	std::vector<double> curWeights;
 	std::vector<cv::Scalar> colors;
 	std::vector<double> assignedSP;
 	std::vector<double> margProbs;
@@ -21,6 +22,7 @@ private:
 	double temp;
 	int curSize;
 	int maxSize;
+	bool reuse = false;
 
 public:
 	Palette();
@@ -43,5 +45,6 @@ public:
 	void splitPair(int num);
 	cv::Scalar getClusterAvg(int pcolor);
 	void saturatePalette();
+	bool importMat(std::string filename);
 };
 

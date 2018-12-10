@@ -11,6 +11,8 @@ Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Scalar 
 	colors.reserve(2*size);
 	margProbs.reserve(2*size);
 	paletteChange = 0.0;
+	curWeights.reserve(pixelImage->numPixels());
+	curWeights = std::vector<double>(pixelImage->numPixels(), 0.0);
 
 	//add the first color to palette
 	colors.push_back({ startColor1 });
@@ -28,6 +30,7 @@ Palette::Palette(PicImage* img1, SPImage* img2, int size, double cT, cv::Vec3b s
 	colors.reserve(2 * size);
 	margProbs.reserve(2 * size);
 	paletteChange = 0.0;
+	curWeights = std::vector<double>(pixelImage->numPixels(), 0.0);
 
 	//add the first color to palette
 	colors.push_back({ (cv::Scalar)startColor1 });
@@ -61,14 +64,17 @@ void Palette::associatePalette() { //associate superpixels to colors in the pale
 
 	// update the marginal probabilities in the palette P(c_k)
 	std::vector<double> probs = std::vector<double>(curSize, 0.0);
+	reuse = false;
 	for (int y = 0; y < curSize; y++) {
 		for (int x = 0; x < pixelImage->numPixels(); x++) {
 			probs[y] += pixelImage->getPixel(x)->getPaletteProbs()[y] * weight(x);
+			reuse = true;
 		}
 	}
 	for (int x = 0; x < curSize; x++) {
 		margProbs[x] = probs[x];
 	}
+	reuse = false;
 }
 
 void Palette::refinePalette() {
@@ -76,11 +82,13 @@ void Palette::refinePalette() {
 	paletteChange = 0.0;
 
 	// refine the palette
+	reuse = false;
 	for (int x = 0; x < curSize; x++) {
 		cv::Scalar agg = cv::Scalar(0.0, 0.0, 0.0);
 		for (int num = 0; num < pixelImage->numPixels(); num++) {
 			auto pcolor = (*pixelImage->getPixel(num)).getAvgColor();
 			double factor = (*pixelImage->getPixel(num)).getPaletteProbs()[x] * weight(x);
+			reuse = true;
 			agg[0] += pcolor[0] * factor;
 			agg[1] += pcolor[1] * factor;
 			agg[2] += pcolor[2] * factor;
@@ -221,7 +229,38 @@ double Palette::colorDist(cv::Scalar icolor, int pcolor) {
 
 double Palette::weight(int num) {
 	//std::cout << "Palette.weight() has not yet been implemented; defaulting to uniform.\n";
-	return 1.0 / pixelImage->numPixels();
+	if (importanceMap.empty())
+		return 1.0 / pixelImage->numPixels();
+	if (reuse)
+		return curWeights[num];
+
+	//find the sums of each super pixel
+	std::vector<double> wagg = std::vector<double>(pixelImage->numPixels(), 0.0);
+	double acc = 0.0;
+	std::vector<int> cagg = std::vector<int>(pixelImage->numPixels(), 0);
+	for (int x = 0; x < origImage->numPixels(); x++) {
+		int assign = origImage->getPixel(x)->getSpNum();
+		cagg[assign] += 1;
+		wagg[assign] += importanceMap[x];
+		acc += importanceMap[x];
+	}
+
+	//divide by the number of pixels per superpixel
+	double probAcc = 0.0;
+	for (int x = 0; x < pixelImage->numPixels(); x++) {
+		curWeights[x] = 0.0;
+		if (cagg[x] == 0)
+			continue;
+		//curWeights[x] = wagg[x] / (0.0 + cagg[x]);
+		curWeights[x] = wagg[x] / cagg[x];
+		probAcc += curWeights[x];
+	}
+
+	//normalize the weights and return
+	for (int x = 0; x < pixelImage->numPixels(); x++) {
+		curWeights[x] /= acc;
+	}
+	return curWeights[num];
 }
 
 void Palette::editColor(int num, cv::Scalar newColor) {
@@ -300,4 +339,16 @@ void Palette::saturatePalette() {
 		colors[x][1] = (1.1*(colors[x][1] - 128)) + 128;
 		colors[x][2] = (1.1*(colors[x][2] - 128)) + 128;
 	}
+}
+
+bool Palette::importMat(std::string filename) {
+	cv::Mat image = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+	if (image.rows != origImage->rows() || image.cols != origImage->cols())
+		return false;
+	for (int x = 0; x < image.cols; x++) {
+		for (int y = 0; y < image.rows; y++) {
+			importanceMap.push_back({ (double)(image.at<uchar>(y, x)) / 255.0 });
+		}
+	}
+	return true;
 }
