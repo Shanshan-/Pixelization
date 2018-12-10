@@ -1,72 +1,28 @@
 #include "main.h"
 
 int main(int argc, char **argv) {
-	//setup input variables
-	char defaultLoc;
-	std::string file;
-	cv::Mat image;
-
-	//use std::in to take in desired image file
-	std::cout << "Using root \"../Images/\" folder? (y/n) ";
-	std::cin >> defaultLoc;
-	while (TRUE) {
-		//get file location
-		if (defaultLoc == 'n')
-			std::cout << "\nEnter full path to desired image: ";
-		else if (defaultLoc == 'y')
-			std::cout << "\nEnter image filename: " << IMG_PATH;
-		else
-			std::cout << "\nInvalid input. Using default location: " << IMG_PATH;
-		std::cin >> file;
-
-		//try to read the image
-		if (defaultLoc != 'n')
-			file = IMG_PATH + file;
-		image = cv::imread(IMG_PATH + file);
-
-		//if image exists, continue, else, reprompt
-		if (!image.empty())
-			break;
-		else
-			std::cout << "Could not open or find the image" << std::endl;
-	}
-
-	//get the target spSize
-	int spSize = -1;
-	std::cout << "Enter desired size of superpixels for (" 
-		<< image.cols << ", " << image.rows << "): ";
-	std::cin >> spSize;
-	while (spSize > std::min(image.rows, image.cols) || spSize <= 0) {
-		std::cout << "Invalid number.  Please enter a number between 0 and the size of the chosen image: ";
-		std::cin >> spSize;
-	}
-
-	//get the target scale size
-	int displayScale = 10;
-	std::cout << "Enter desired scale size for displaying the output image: ";
-	std::cin >> displayScale;
-	while (displayScale < 0) {
-		std::cout << "Invalid number.  Please enter a positive number: ";
-		std::cin >> displayScale;
-	}
+	AppGui gui = AppGui();
+	gui.testBench();
 
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
-	//int spSize = 10; //squirrel size = 9, scale = 10, mult = 2
-	//int displayScale = 30;
-	//std::string filename = IMG_PATH "squirrel.jpg"; //spSize 9, scale 10
-	//std::string filename = IMG_PATH "chi.jpg"; //spSize 10, scale 30
-	//std::string filename = IMG_PATH "flowers.jpg"; //spSize 36, scale 10
-	//std::string filename = IMG_PATH "test.png"; //spSize 2
-	//std::string filename = IMG_PATH "shield.png"; //spSize 10
-	
-	runAlgo(file, spSize, displayScale);
-	return 0;
-}
+	int paletteSize = 8;
+	int spSize = 500; //squirrel size = 9, scale = 10, mult = 2
+	int displayScale = 15;
 
-void runAlgo(std::string filename, int spSize, int displayScale) {
 	//load image
-	cv::Mat image = cv::imread(filename);
+	cv::Mat image = cv::imread(IMG_PATH "obama.png"); //spSize 
+	//cv::Mat image = cv::imread(IMG_PATH "chi.jpg"); //spSize 
+	//cv::Mat image = cv::imread(IMG_PATH "flowers.jpg"); //spSize 36
+	//cv::Mat image = cv::imread(IMG_PATH "test.png"); //spSize 2
+	//cv::Mat image = cv::imread(IMG_PATH "shield.png"); //spSize 10
+	//TODO: program breaks if length and width are not exact multiples of spSize
+	if (image.empty()) {
+		char c;
+		std::cout << "Could not open or find the image" << std::endl;
+		std::cin >> c;
+		exit(-1);
+	}
 
 	//determine the mean color of image and the starting temperature
 	cv::cvtColor(image, image, cv::COLOR_BGR2Lab);
@@ -76,7 +32,7 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 	cv::Scalar startColor1 = cv::Scalar({ meanColor[0], meanColor[1], meanColor[2] });
 	cv::Scalar startColor2 = cv::Scalar({ meanColor[0], meanColor[1], meanColor[2] });
 	double startTemp = initPCA(image, &startColor1, &startColor2);
-
+	
 	//generate image classes to work with
 	PicImage pimage = PicImage(image);
 	SPImage spImage = SPImage(image.rows, image.cols, spSize, &pimage);
@@ -87,11 +43,11 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 	std::cout << "Superpixels initialized\n";
 
 	//initialize other variables/objects needed for loop
-	Palette palette = Palette(&pimage, &spImage, PALETTE_SIZE, startTemp, startColor1, startColor2);
+	Palette palette = Palette(&pimage, &spImage, paletteSize, startTemp, startColor1, startColor2);
 	Slic slic = Slic(&pimage, &spImage, &palette);
 	double curTemp = 1.1 * startTemp;
 	int count = 0;
-
+	
 	while (curTemp > FINAL_TEMP) {
 		std::cout << "Starting iteration at temp " << curTemp << " : ";
 		count++;
@@ -102,7 +58,7 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 		//refine the palette
 		palette.associatePalette();
 		palette.refinePalette();
-		std::string file = RESULTS_PATH "chi curTemp ";
+		std::string file = RESULTS_PATH "obama curTemp ";
 		file.append(std::to_string(int(curTemp)));
 		file.append(" pic ");
 		file.append(std::to_string(count));
@@ -111,7 +67,7 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 		std::cout << "Change value = " << palette.getChange() << std::endl;
 
 		if (palette.getChange() < TEMP_CHANGE_THRESH) {
-			if (palette.getCurSize() == PALETTE_SIZE * 2) {
+			if (palette.getCurSize() == paletteSize * 2) {
 				std::cout << "Convergence has occured with a full palette.  Outputting...\n";
 				break;
 			}
@@ -125,6 +81,7 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 	palette.displayPixelImage(displayScale, RESULTS_PATH "output.png", TRUE);
 	palette.saturatePalette();
 	palette.displayPixelImage(displayScale, RESULTS_PATH "saturated output.png", TRUE);
+	return 0;
 }
 
 // Get the average color of all pixels
