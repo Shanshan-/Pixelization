@@ -11,6 +11,7 @@
 #define EXPAND_THRESH_FACTOR 0.7
 #define SPLIT_THRESH 5 //TODO: experiment with tweaking this number
 #define DISPLAY_TIME 3000
+#define SATURATE_FACTOR 1.1
 
 class Palette {
 private:
@@ -44,5 +45,6 @@ public:
 	double pairDiff(int num);
 	void splitPair(int num);
 	cv::Scalar getClusterAvg(int pcolor);
+	void saturatePalette();
 };
 

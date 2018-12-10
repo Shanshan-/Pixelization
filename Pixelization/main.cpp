@@ -4,11 +4,14 @@ int main(int argc, char **argv) {
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	int paletteSize = 8;
-	int spSize = 36; //squirrel size = 9, scale = 10, mult = 2
+	int spSize = 500; //squirrel size = 9, scale = 10, mult = 2
 
 	//load image
-	cv::Mat image = cv::imread(IMG_PATH "squirrel.jpg");
-	//cv::Mat image = cv::imread(IMG_PATH "test.png");
+	cv::Mat image = cv::imread(IMG_PATH "obama.png"); //spSize 
+	//cv::Mat image = cv::imread(IMG_PATH "chi.jpg"); //spSize 
+	//cv::Mat image = cv::imread(IMG_PATH "flowers.jpg"); //spSize 36
+	//cv::Mat image = cv::imread(IMG_PATH "test.png"); //spSize 2
+	//cv::Mat image = cv::imread(IMG_PATH "shield.png"); //spSize 10
 	//TODO: program breaks if length and width are not exact multiples of spSize
 	if (image.empty()) {
 		char c;
@@ -51,16 +54,16 @@ int main(int argc, char **argv) {
 		//refine the palette
 		palette.associatePalette();
 		palette.refinePalette();
-		std::string file = RESULTS_PATH "squirrel curTemp ";
+		std::string file = RESULTS_PATH "obama curTemp ";
 		file.append(std::to_string(int(curTemp)));
 		file.append(" pic ");
 		file.append(std::to_string(count));
 		file.append(".png");
-		palette.displayPixelImage(30, file);
+		palette.displayPixelImage(15, file);
 		std::cout << "Change value = " << palette.getChange() << std::endl;
 
 		if (palette.getChange() < TEMP_CHANGE_THRESH) {
-			if (palette.getCurSize() == paletteSize) {
+			if (palette.getCurSize() == paletteSize * 2) {
 				std::cout << "Convergence has occured with a full palette.  Outputting...\n";
 				break;
 			}
@@ -70,8 +73,10 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	// Output image
-	palette.displayPixelImage(10, "", TRUE);
+	//post process and output image
+	palette.displayPixelImage(15, RESULTS_PATH "output.png", TRUE);
+	palette.saturatePalette();
+	palette.displayPixelImage(15, RESULTS_PATH "saturated output.png", TRUE);
 	return 0;
 }
 

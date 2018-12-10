@@ -294,3 +294,10 @@ double Palette::pairDiff(int num) {
 	double db = colors[num][2] - colors[num + 1][2];
 	return sqrt(pow(dl, 2) + pow(da, 2) + pow(db, 2));
 }
+
+void Palette::saturatePalette() {
+	for (int x = 0; x < curSize; x++) {
+		colors[x][1] = (1.1*(colors[x][1] - 128)) + 128;
+		colors[x][2] = (1.1*(colors[x][2] - 128)) + 128;
+	}
+}
