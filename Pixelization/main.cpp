@@ -5,6 +5,7 @@ int main(int argc, char **argv) {
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	int paletteSize = 8;
 	int spSize = 500; //squirrel size = 9, scale = 10, mult = 2
+	int displayScale = 15;
 
 	//load image
 	cv::Mat image = cv::imread(IMG_PATH "obama.png"); //spSize 
@@ -59,7 +60,7 @@ int main(int argc, char **argv) {
 		file.append(" pic ");
 		file.append(std::to_string(count));
 		file.append(".png");
-		palette.displayPixelImage(15, file);
+		palette.displayPixelImage(displayScale, file);
 		std::cout << "Change value = " << palette.getChange() << std::endl;
 
 		if (palette.getChange() < TEMP_CHANGE_THRESH) {
@@ -74,9 +75,9 @@ int main(int argc, char **argv) {
 	}
 
 	//post process and output image
-	palette.displayPixelImage(15, RESULTS_PATH "output.png", TRUE);
+	palette.displayPixelImage(displayScale, RESULTS_PATH "output.png", TRUE);
 	palette.saturatePalette();
-	palette.displayPixelImage(15, RESULTS_PATH "saturated output.png", TRUE);
+	palette.displayPixelImage(displayScale, RESULTS_PATH "saturated output.png", TRUE);
 	return 0;
 }
 
