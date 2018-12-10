@@ -7,14 +7,11 @@
 #define CL1_COLOR 1
 #define CL2_COLOR 2
 #define VARIANCE 3
-#define PCA_FACTOR 20
-#define EXPAND_THRESH_FACTOR 0.7
-#define SPLIT_THRESH 5 //TODO: experiment with tweaking this number
-#define DISPLAY_TIME 3000
 #define SATURATE_FACTOR 1.1
 
 class Palette {
 private:
+	std::vector<double> importanceMap;
 	std::vector<cv::Scalar> colors;
 	std::vector<double> assignedSP;
 	std::vector<double> margProbs;
