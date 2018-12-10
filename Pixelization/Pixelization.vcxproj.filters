@@ -36,9 +36,6 @@
     <ClCompile Include="PicImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppGui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="tutorials.txt" />
@@ -71,9 +68,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PicImage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AppGui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
