@@ -6,6 +6,7 @@
 #include "PicImage.h"
 #include "Palette.h"
 #include "Pixel.h"
+#include "AppGui.h"
 
 #define IMG_PATH "../Images/"
 #define RESULTS_PATH "../Results/"

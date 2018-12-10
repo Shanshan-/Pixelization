@@ -135,6 +135,7 @@
     <ClCompile Include="Slic.cpp" />
     <ClCompile Include="SPImage.cpp" />
     <ClCompile Include="SuperPixel.cpp" />
+    <ClCompile Include="AppGui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="movable teapot code.txt" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Slic.h" />
     <ClInclude Include="SPImage.h" />
     <ClInclude Include="SuperPixel.h" />
+    <ClInclude Include="AppGui.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Pixelization.rc" />

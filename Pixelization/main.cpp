@@ -1,6 +1,9 @@
 #include "main.h"
 
 int main(int argc, char **argv) {
+	AppGui gui = AppGui();
+	gui.testBench();
+
 	//hardcode initial values for now
 	//TODO: these should be taken in as inputs to program (start from console, then by gui)
 	int paletteSize = 8;
