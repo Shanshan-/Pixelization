@@ -267,3 +267,4 @@ enc_temp_folder/*
 # Result Images
 Results/*
 /Pixelization/test.cpp
+*.zip
