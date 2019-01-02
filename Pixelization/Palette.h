@@ -39,7 +39,7 @@ public:
 	int getCurSize();
 	double getCurTemp();
 	void permutePCA(int pcolor);
-	void displayPixelImage(int scale, std::string path="", bool wait=FALSE);
+	void displayPixelImage(int scale, std::string path="", bool wait=false);
 	cv::Scalar getColor(int pcolor);
 	double pairDiff(int num);
 	void splitPair(int num);

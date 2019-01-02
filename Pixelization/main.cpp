@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 	//use std::in to take in desired image file
 	std::cout << "Using root \"../Images/\" folder? (y/n) ";
 	std::cin >> defaultLoc;
-	while (TRUE) {
+	while (true) {
 		//get file location
 		if (defaultLoc == 'n')
 			std::cout << "Enter full path to desired image: ";
@@ -114,7 +114,7 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 		//refine the palette
 		palette.associatePalette();
 		palette.refinePalette();
-		std::string file = RESULTS_PATH "squirrel curTemp ";
+		std::string file = RESULTS_PATH "output curTemp ";
 		file.append(std::to_string(int(curTemp)));
 		file.append(" pic ");
 		file.append(std::to_string(count));
@@ -154,9 +154,9 @@ void runAlgo(std::string filename, int spSize, int displayScale) {
 	}
 
 	//post process and output image
-	palette.displayPixelImage(displayScale, RESULTS_PATH "output.png", TRUE);
+	palette.displayPixelImage(displayScale, RESULTS_PATH "output.png", true);
 	palette.saturatePalette();
-	palette.displayPixelImage(displayScale, RESULTS_PATH "saturated output.png", TRUE);
+	palette.displayPixelImage(displayScale, RESULTS_PATH "saturated output.png", true);
 }
 
 // Get the average color of all pixels
