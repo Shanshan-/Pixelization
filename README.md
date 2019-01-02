@@ -7,7 +7,7 @@ input pixel to output (super)pixel, and the latter controls the colors in the pa
 
 
 ### To run the program:
-Download the directory, and open in Microsoft Visual Studio.  Resolve any library dependencies, and proceed to run.
+Download the directory, and open in Microsoft Visual Studio.  Resolve any library dependencies for opencv (related .lib file list in 'lib files.txt'), and proceed to run.
 
 
 ### Additional notes:
